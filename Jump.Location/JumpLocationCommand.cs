@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Management.Automation;
 
 namespace Jump.Location
@@ -43,10 +42,10 @@ namespace Jump.Location
         
         protected override void ProcessRecord()
         {
-            var objs = InvokeCommand.InvokeScript(string.Format("Get-Item -Path {0}", Directory));
-            var property = objs.First().Properties.First(x => x.Name == "PSPath");
-            var fullPath = property.Value.ToString().Split(new[]{"::"}, StringSplitOptions.None)[1];
-            
+            var best = Controller.FindBest(Directory);
+            if (best == null) throw new LocationNotFoundException(Directory);
+
+            var fullPath = best.Path;
             InvokeCommand.InvokeScript(string.Format("Set-Location {0}", fullPath));
         }
     }

@@ -66,6 +66,7 @@
     <Compile Include="JumpLocationSnapIn.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="LocationNotFoundException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Record.cs" />
   </ItemGroup>
