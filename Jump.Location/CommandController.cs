@@ -9,6 +9,7 @@ namespace Jump.Location
         private readonly IDatabase database;
         private readonly IFileStoreProvider fileStore;
         private bool needsToSave;
+        private DirectoryWaitPeriod waitPeriod;
 
         public CommandController(IDatabase database, IFileStoreProvider fileStore)
         {
@@ -25,6 +26,17 @@ namespace Jump.Location
         public void UpdateLocation(string fullName)
         {
             var record = database.GetByFullName(fullName);
+            var dontSave = waitPeriod == null;
+            waitPeriod = new DirectoryWaitPeriod(record, DateTime.Now);
+
+            if (dontSave) return;
+
+            waitPeriod.CloseAndUpdate();
+            Save();
+        }
+
+        private void Save()
+        {
             needsToSave = true;
         }
 
