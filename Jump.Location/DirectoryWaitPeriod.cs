@@ -4,11 +4,11 @@ namespace Jump.Location
 {
     class DirectoryWaitPeriod
     {
-        private readonly Record record;
+        private readonly IRecord record;
         private readonly DateTime startTime;
         private bool hasDestroyed;
 
-        public DirectoryWaitPeriod(Record record, DateTime now)
+        public DirectoryWaitPeriod(IRecord record, DateTime now)
         {
             this.record = record;
             startTime = now;
@@ -18,9 +18,7 @@ namespace Jump.Location
         {
             if (hasDestroyed) throw new InvalidOperationException("You can't call CloseAndUpdate multiple times");
 
-            var seconds = (DateTime.Now - startTime).TotalSeconds;
-            record.Weight += (decimal) seconds;
-
+            record.AddTimeSpent(DateTime.Now - startTime);
             hasDestroyed = true;
         }
     }

@@ -2,7 +2,16 @@ using System;
 
 namespace Jump.Location
 {
-    class Record
+    public interface IRecord
+    {
+        string Provider { get; }
+        string Path { get; }
+        string FullName { get; set; }
+        decimal Weight { get; }
+        void AddTimeSpent(TimeSpan timeSpan);
+    }
+
+    class Record : IRecord
     {
         public Record(string fullName, decimal weight)
         {
@@ -28,6 +37,11 @@ namespace Jump.Location
             }
         }
 
-        public decimal Weight { get; set; }
+        public decimal Weight { get; private set; }
+
+        public void AddTimeSpent(TimeSpan timeSpan)
+        {
+            Weight += (decimal) timeSpan.TotalSeconds;
+        }
     }
 }
