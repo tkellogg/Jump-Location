@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using Moq;
 using Should;
@@ -170,6 +171,21 @@ namespace Jump.Location.Specs
 
                 var record = controller.FindBest("ers");
                 record.Path.ShouldEqual(@"C:\Users\tkellogg");
+            }
+
+            [Fact]
+            public void Matches_are_ordered_by_weights()
+            {
+                dbMock.Setup(x => x.Records).Returns(new[]
+                    {
+                        new Record(@"FS::C:\Users\tkellogg", 10M), 
+                        new Record(@"FS::C:\Users\tkellogg2", 13M), 
+                        new Record(@"FS::C:\Users\tkellogg3", 15M), 
+                    });
+
+                var record = controller.GetMatchesForSearchTerm("");
+                record.Select(x => x.Path).ToArray()
+                    .ShouldEqual(new[]{@"C:\Users\tkellogg3", @"C:\Users\tkellogg2", @"C:\Users\tkellogg"});
             }
         }
     }

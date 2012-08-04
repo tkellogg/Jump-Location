@@ -67,24 +67,46 @@ namespace Jump.Location
             return GetMatchesForSearchTerm(search).FirstOrDefault();
         }
 
-        private IEnumerable<IRecord> GetMatchesForSearchTerm(string search)
+        internal IEnumerable<IRecord> GetMatchesForSearchTerm(string search)
         {
+            var used = new HashSet<string>();
             search = search.ToLower();
-            foreach (var record in database.Records
+
+            foreach (var record in GetOrderedRecords()
                     .Where(x => x.PathSegments.Last().StartsWith(search)))
+            {
+                used.Add(record.Path);
                 yield return record;
+            }
 
-            foreach (var record in database.Records
+            foreach (var record in GetOrderedRecords()
                     .Where(x => x.PathSegments.Last().Contains(search)))
+            {
+                if (used.Contains(record.Path)) continue;
+                used.Add(record.Path);
                 yield return record;
+            }
 
-            foreach (var record in database.Records
+            foreach (var record in GetOrderedRecords()
                     .Where(x => x.PathSegments.Any(s => s.StartsWith(search))))
+            {
+                if (used.Contains(record.Path)) continue;
+                used.Add(record.Path);
                 yield return record;
+            }
 
-            foreach (var record in database.Records
+            foreach (var record in GetOrderedRecords()
                     .Where(x => x.PathSegments.Any(s => s.Contains(search))))
+            {
+                if (used.Contains(record.Path)) continue;
+                used.Add(record.Path);
                 yield return record;
+            }
         }
+
+        private IEnumerable<IRecord> GetOrderedRecords()
+        {
+            return database.Records.OrderByDescending(x => x.Weight);
+        } 
     }
 }

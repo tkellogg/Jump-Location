@@ -13,10 +13,11 @@ namespace Jump.Location
          * x1. Figure out how long they stay in the directory
          * x2. Log occurences of filename / weight
          * x3. Tail matches - search matches beginning of last segment of path
-         * 4. Weighting algorithm - match what Autojump does to increase weights
-         * 5. Match what Autojump does to degrade weights
-         * 6. Multiple args - last arg is a tail match, previous args match previous segments
-         * 7. Tab completion - list 5 best matches
+         * 4. Make MSI installer for easy use
+         * 5. Weighting algorithm - match what Autojump does to increase weights
+         * 6. Match what Autojump does to degrade weights
+         * 7. Multiple args - last arg is a tail match, previous args match previous segments
+         * 8. Tab completion - list 5 best matches
          */
 
         [Parameter(Position = 0)]
