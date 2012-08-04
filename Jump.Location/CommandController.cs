@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Jump.Location
 {
@@ -15,7 +14,8 @@ namespace Jump.Location
         {
             this.database = database;
             this.fileStore = fileStore;
-            Task.Factory.StartNew(SaveLoop);
+            var thread = new Thread(SaveLoop);
+            thread.Start();
         }
 
         public CommandController(string path)

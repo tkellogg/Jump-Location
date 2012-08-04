@@ -8,7 +8,7 @@ namespace Jump.Location
     public class JumpLocationCommand : PSCmdlet
     {
         private static bool _hasRegisteredDirectoryHook;
-        private static readonly CommandController Controller = new CommandController(@"C:\jump-location.db");
+        private static readonly CommandController Controller = new CommandController(@"C:\Users\Kerianne\jump-location.txt");
 
         /*
          * 1. Figure out how long they stay in the directory

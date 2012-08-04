@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -24,14 +23,14 @@ namespace Jump.Location
         {
             var lines = database.Records.Select(record => 
                 string.Format("{0}\t{1}", record.FullName, record.Weight));
-            File.WriteAllLines(path, lines);
+            File.WriteAllLines(path, lines.ToArray());
         }
 
         public IDatabase Revive()
         {
             var db = new Database();
             var allLines = File.ReadAllLines(path);
-            var nonBlankLines = allLines.Where(line => !string.IsNullOrWhiteSpace(line));
+            var nonBlankLines = allLines.Where(line => !string.IsNullOrEmpty(line) && line.Trim() != string.Empty);
             foreach (var columns in nonBlankLines.Select(line => line.Split('\t')))
             {
                 if (columns == null || columns.Length != 2)
