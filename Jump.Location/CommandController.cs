@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
@@ -63,8 +64,27 @@ namespace Jump.Location
 
         public IRecord FindBest(string search)
         {
+            return GetMatchesForSearchTerm(search).FirstOrDefault();
+        }
+
+        private IEnumerable<IRecord> GetMatchesForSearchTerm(string search)
+        {
             search = search.ToLower();
-            return database.Records.FirstOrDefault(x => x.PathSegments.Last().StartsWith(search));
+            foreach (var record in database.Records
+                    .Where(x => x.PathSegments.Last().StartsWith(search)))
+                yield return record;
+
+            foreach (var record in database.Records
+                    .Where(x => x.PathSegments.Last().Contains(search)))
+                yield return record;
+
+            foreach (var record in database.Records
+                    .Where(x => x.PathSegments.Any(s => s.StartsWith(search))))
+                yield return record;
+
+            foreach (var record in database.Records
+                    .Where(x => x.PathSegments.Any(s => s.Contains(search))))
+                yield return record;
         }
     }
 }

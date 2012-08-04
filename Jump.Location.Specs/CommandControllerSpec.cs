@@ -123,6 +123,54 @@ namespace Jump.Location.Specs
                 var record = controller.FindBest("t");
                 record.Path.ShouldEqual(@"C:\Users\tkellogg");
             }
+
+            [Fact]
+            public void Matches_substring_of_last_segment()
+            {
+                dbMock.Setup(x => x.Records).Returns(new[]
+                    {
+                        new Record(@"FS::C:\Users\tkellogg", 10M), 
+                    });
+
+                var record = controller.FindBest("ell");
+                record.Path.ShouldEqual(@"C:\Users\tkellogg");
+            }
+
+            [Fact]
+            public void Exact_match_of_middle_segment()
+            {
+                dbMock.Setup(x => x.Records).Returns(new[]
+                    {
+                        new Record(@"FS::C:\Users\tkellogg", 10M), 
+                    });
+
+                var record = controller.FindBest("users");
+                record.Path.ShouldEqual(@"C:\Users\tkellogg");
+            }
+
+            [Fact]
+            public void Middle_segment_starts_with_search_term()
+            {
+                dbMock.Setup(x => x.Records).Returns(new[]
+                    {
+                        new Record(@"FS::C:\Users\tkellogg", 10M), 
+                    });
+
+                var record = controller.FindBest("user");
+                record.Path.ShouldEqual(@"C:\Users\tkellogg");
+            }
+
+            [Fact]
+            public void Substring_of_middle_segment()
+            {
+                dbMock.Setup(x => x.Records).Returns(new[]
+                    {
+                        new Record(@"FS::C:\Users\tkellogg", 10M), 
+                    });
+
+                var record = controller.FindBest("ers");
+                record.Path.ShouldEqual(@"C:\Users\tkellogg");
+            }
         }
     }
 }
