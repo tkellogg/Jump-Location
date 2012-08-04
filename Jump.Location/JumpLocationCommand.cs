@@ -13,8 +13,8 @@ namespace Jump.Location
         /*
          * 1. Figure out how long they stay in the directory
          * 2. Log occurences of filename / weight
-         * 3. Implement exact substring matches - jump to longest common substring
-         * 4. 
+         * 3. Tail matches - search matches beginning of last segment of path
+         * 4. Multiple args - last arg is a tail match, previous args match previous segments
          */
 
         [Parameter(Position = 0)]

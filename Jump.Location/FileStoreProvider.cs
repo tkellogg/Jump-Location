@@ -22,7 +22,7 @@ namespace Jump.Location
         public void Save(IDatabase database)
         {
             var lines = database.Records.Select(record => 
-                string.Format("{0}\t{1}", record.FullName, record.Weight));
+                string.Format("{1}\t{0}", record.FullName, record.Weight));
             File.WriteAllLines(path, lines.ToArray());
         }
 
@@ -36,8 +36,8 @@ namespace Jump.Location
                 if (columns == null || columns.Length != 2)
                     throw new InvalidOperationException("Row of file didn't have 2 columns separated by a tab");
 
-                var weight = decimal.Parse(columns[1]);
-                var record = new Record(columns[0], weight);
+                var weight = decimal.Parse(columns[0]);
+                var record = new Record(columns[1], weight);
                 db.Add(record);
             }
             return db;

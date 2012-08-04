@@ -26,7 +26,7 @@ namespace Jump.Location.Specs
             [Fact]
             public void It_can_Revive_a_single_record_of_correctly_formatted_text()
             {
-                var lines = new[] {"FS::C:\\blah\t8.5"};
+                var lines = new[] {"8.5\tFS::C:\\blah"};
                 File.WriteAllLines(path, lines);
                 var provider = new FileStoreProvider(path);
 
@@ -40,9 +40,9 @@ namespace Jump.Location.Specs
             {
                 var lines = new[]
                     {
-                        "FS::C:\\blah\t8.5",
-                        "FS::C:\\blah\t8.5",
-                        "FS::C:\\blah\t8.5",
+                        "8.5\tFS::C:\\blah",
+                        "8.5\tFS::C:\\blah",
+                        "8.5\tFS::C:\\blah",
                     };
                 File.WriteAllLines(path, lines);
                 var provider = new FileStoreProvider(path);
@@ -57,7 +57,7 @@ namespace Jump.Location.Specs
                 var lines = new[]
                     {
                         "",
-                        "FS::C:\\blah\t8.5",
+                        "8.5\tFS::C:\\blah",
                         "    ",
                     };
                 File.WriteAllLines(path, lines);
@@ -70,7 +70,7 @@ namespace Jump.Location.Specs
             [Fact]
             public void It_throws_InvalidOperationException_when_row_doesnt_have_2_columns()
             {
-                var lines = new[] {"FS::C:\\blah    8.5"};
+                var lines = new[] {"8.5    FS::C:\\blah"};
                 File.WriteAllLines(path, lines);
                 var provider = new FileStoreProvider(path);
 
@@ -102,7 +102,7 @@ namespace Jump.Location.Specs
                 provider.Save(db);
 
                 var contents = File.ReadAllText(path);
-                contents.ShouldEqual("FS::C:\\data\t42\r\n");
+                contents.ShouldEqual("42\tFS::C:\\data\r\n");
             }
         }
     }
