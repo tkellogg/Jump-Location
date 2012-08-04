@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="DatabaseSpec.cs" />
     <Compile Include="DirectoryWaitPeriodSpec.cs" />
+    <Compile Include="FileStoreProviderSpec.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecordSpec.cs" />
   </ItemGroup>
