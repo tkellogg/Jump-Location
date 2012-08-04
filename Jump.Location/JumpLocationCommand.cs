@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Management.Automation;
-using System.Management.Automation.Runspaces;
-using Microsoft.PowerShell.Commands;
 
 namespace Jump.Location
 {
@@ -10,7 +8,7 @@ namespace Jump.Location
     public class JumpLocationCommand : PSCmdlet
     {
         private static bool _hasRegisteredDirectoryHook;
-        private Container container;
+        private static readonly CommandController Controller = new CommandController(@"C:\jump-location.db");
 
         /*
          * 1. Figure out how long they stay in the directory
@@ -22,21 +20,14 @@ namespace Jump.Location
         [Parameter(Position = 0)]
         public string Directory { get; set; }
 
-        class Container
-        {
-            public string Last { get; set; }
-        }
-
-        private static int counter = 0;
         public static void UpdateTime(string location)
         {
-            Console.WriteLine(location);
+            Controller.UpdateLocation(location);
         }
 
         protected override void BeginProcessing()
         {
             base.BeginProcessing();
-            container = container ?? new Container();
 
             if (_hasRegisteredDirectoryHook) return;
 

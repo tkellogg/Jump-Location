@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandController.cs" />
     <Compile Include="Database.cs" />
     <Compile Include="DirectoryWaitPeriod.cs" />
     <Compile Include="FileStoreProvider.cs" />

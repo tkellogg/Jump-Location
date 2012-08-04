@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace Jump.Location
 {
@@ -7,6 +8,7 @@ namespace Jump.Location
         IEnumerable<IRecord> Records { get; }
         void Add(string fullPath);
         void Add(IRecord record);
+        IRecord GetByFullName(string fullName);
     }
 
     class Database : IDatabase
@@ -23,6 +25,19 @@ namespace Jump.Location
         public void Add(IRecord record)
         {
             records.Add(record);
+        }
+
+        public IRecord GetByFullName(string fullName)
+        {
+            var record = records.FirstOrDefault(x => x.FullName == fullName);
+
+            if (record == null)
+            {
+                record = new Record(fullName);
+                Add(record);
+            }
+
+            return record;
         }
     }
 }

@@ -54,6 +54,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CommandControllerSpec.cs" />
     <Compile Include="DatabaseSpec.cs" />
     <Compile Include="DirectoryWaitPeriodSpec.cs" />
     <Compile Include="FileStoreProviderSpec.cs" />

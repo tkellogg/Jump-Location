@@ -1,0 +1,51 @@
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Jump.Location
+{
+    class CommandController
+    {
+        private readonly IDatabase database;
+        private readonly IFileStoreProvider fileStore;
+        private bool needsToSave;
+
+        public CommandController(IDatabase database, IFileStoreProvider fileStore)
+        {
+            this.database = database;
+            this.fileStore = fileStore;
+            Task.Factory.StartNew(SaveLoop);
+        }
+
+        public CommandController(string path)
+            :this(new Database(), new FileStoreProvider(path))
+        {
+        }
+
+        public void UpdateLocation(string fullName)
+        {
+            var record = database.GetByFullName(fullName);
+            needsToSave = true;
+        }
+
+        private void SaveLoop()
+        {
+            while(true)
+            {
+                if (needsToSave)
+                {
+                    try
+                    {
+                        needsToSave = false;
+                        fileStore.Save(database);
+                    }
+                    catch(Exception e)
+                    {
+                        Console.Error.WriteLine("Jump-Location received {0}: {1}", e.GetType().Name, e.Message);
+                    }
+                }
+                else Thread.Sleep(0);
+            }
+        }
+    }
+}
