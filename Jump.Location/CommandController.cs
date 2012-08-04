@@ -27,13 +27,11 @@ namespace Jump.Location
 
         public void UpdateLocation(string fullName)
         {
+            if (waitPeriod != null)
+                waitPeriod.CloseAndUpdate();
+
             var record = database.GetByFullName(fullName);
-            var dontSave = waitPeriod == null;
             waitPeriod = new DirectoryWaitPeriod(record, DateTime.Now);
-
-            if (dontSave) return;
-
-            waitPeriod.CloseAndUpdate();
             Save();
         }
 
@@ -107,6 +105,14 @@ namespace Jump.Location
         private IEnumerable<IRecord> GetOrderedRecords()
         {
             return database.Records.OrderByDescending(x => x.Weight);
-        } 
+        }
+
+        public void PrintStatus()
+        {
+            foreach (var record in GetOrderedRecords())
+            {
+                Console.WriteLine("{0:   0.00}  {1}", record.Weight, record.Path);
+            }
+        }
     }
 }

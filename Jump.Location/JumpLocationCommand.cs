@@ -18,10 +18,14 @@ namespace Jump.Location
          * 6. Match what Autojump does to degrade weights
          * 7. Multiple args - last arg is a tail match, previous args match previous segments
          * 8. Tab completion - list 5 best matches
+         * x9. Get-JumpStat
          */
 
         [Parameter(Position = 0)]
         public string Directory { get; set; }
+
+        [Parameter]
+        public bool Status { get; set; }
 
         public static void UpdateTime(string location)
         {
@@ -43,6 +47,12 @@ namespace Jump.Location
         
         protected override void ProcessRecord()
         {
+            if (Status)
+            {
+                Controller.PrintStatus();
+                return;
+            }
+
             var best = Controller.FindBest(Directory);
             if (best == null) throw new LocationNotFoundException(Directory);
 
