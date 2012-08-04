@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 
 namespace Jump.Location
@@ -58,6 +59,12 @@ namespace Jump.Location
                 }
                 else Thread.Sleep(0);
             }
+        }
+
+        public IRecord FindBest(string search)
+        {
+            search = search.ToLower();
+            return database.Records.FirstOrDefault(x => x.PathSegments.Last() == search);
         }
     }
 }

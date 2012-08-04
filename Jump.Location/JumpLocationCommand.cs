@@ -11,10 +11,13 @@ namespace Jump.Location
         private static readonly CommandController Controller = new CommandController(@"C:\Users\Kerianne\jump-location.txt");
 
         /*
-         * 1. Figure out how long they stay in the directory
-         * 2. Log occurences of filename / weight
+         * x1. Figure out how long they stay in the directory
+         * x2. Log occurences of filename / weight
          * 3. Tail matches - search matches beginning of last segment of path
-         * 4. Multiple args - last arg is a tail match, previous args match previous segments
+         * 4. Weighting algorithm - match what Autojump does to increase weights
+         * 5. Match what Autojump does to degrade weights
+         * 6. Multiple args - last arg is a tail match, previous args match previous segments
+         * 7. Tab completion - list 5 best matches
          */
 
         [Parameter(Position = 0)]

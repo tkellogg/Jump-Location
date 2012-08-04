@@ -28,5 +28,15 @@ namespace Jump.Location.Specs
                 Assert.Throws<ArgumentException>(() => new Record(path, 0));
             }
         }
+
+        public class DescribePathSegments
+        {
+            [Fact]
+            public void It_splits_Path_into_segments_separated_by_backslash_and_lowercased()
+            {
+                var record = new Record(@"Provider::C:\Program Files (x86)\Alteryx\Engine");
+                record.PathSegments.ShouldEqual(new[] {"c:", "program files (x86)", "alteryx", "engine"});
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace Jump.Location
 {
@@ -8,11 +9,14 @@ namespace Jump.Location
         string Path { get; }
         string FullName { get; set; }
         decimal Weight { get; }
+        string[] PathSegments { get; }
         void AddTimeSpent(TimeSpan timeSpan);
     }
 
     class Record : IRecord
     {
+        private string[] pathSegments;
+
         public Record(string fullName, decimal weight)
         {
             FullName = fullName;
@@ -43,6 +47,16 @@ namespace Jump.Location
         }
 
         public decimal Weight { get; private set; }
+
+        public string[] PathSegments
+        {
+            get { return pathSegments ?? (pathSegments = GetPathSegments()); }
+        }
+
+        private string[] GetPathSegments()
+        {
+            return Path.Split('\\').Select(x => x.ToLower()).ToArray();
+        }
 
         public void AddTimeSpent(TimeSpan timeSpan)
         {
