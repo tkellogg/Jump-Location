@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -21,14 +22,17 @@ namespace Jump.Location
 
         public void Save(IDatabase database)
         {
-            
+            var lines = database.Records.Select(record => 
+                string.Format("{0}\t{1}", record.FullName, record.Weight));
+            File.WriteAllLines(path, lines);
         }
 
         public IDatabase Revive()
         {
             var db = new Database();
             var allLines = File.ReadAllLines(path);
-            foreach (var columns in allLines.Select(line => line.Split('\t')))
+            var nonBlankLines = allLines.Where(line => !string.IsNullOrWhiteSpace(line));
+            foreach (var columns in nonBlankLines.Select(line => line.Split('\t')))
             {
                 if (columns == null || columns.Length != 2)
                     throw new InvalidOperationException("Row of file didn't have 2 columns separated by a tab");
