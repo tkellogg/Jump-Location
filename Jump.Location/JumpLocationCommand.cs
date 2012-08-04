@@ -27,6 +27,9 @@ namespace Jump.Location
         [Parameter]
         public bool Status { get; set; }
 
+        [Parameter]
+        public bool Initialize { get; set; }
+
         public static void UpdateTime(string location)
         {
             Controller.UpdateLocation(location);
@@ -52,6 +55,17 @@ namespace Jump.Location
                 Controller.PrintStatus();
                 return;
             }
+
+            // This lets us do just `Jump-Location` to initialize everything in the profile script
+            if (Initialize)
+            {
+                InvokeCommand.InvokeScript(@"
+                    [Jump.Location.JumpLocationCommand]::UpdateTime($($(Get-Item -Path $(Get-Location))).PSPath);
+                ");
+                return;
+            }
+
+            if (Directory == null) return;
 
             var best = Controller.FindBest(Directory);
             if (best == null) throw new LocationNotFoundException(Directory);
