@@ -19,6 +19,11 @@ namespace Jump.Location
             Weight = weight;
         }
 
+        public Record(string fullName)
+            :this(fullName, 0)
+        {
+        }
+
         public string Provider { get; private set; }
         public string Path { get; private set; }
 
