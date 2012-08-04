@@ -64,7 +64,7 @@ namespace Jump.Location
         public IRecord FindBest(string search)
         {
             search = search.ToLower();
-            return database.Records.FirstOrDefault(x => x.PathSegments.Last() == search);
+            return database.Records.FirstOrDefault(x => x.PathSegments.Last().StartsWith(search));
         }
     }
 }

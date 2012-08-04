@@ -111,6 +111,18 @@ namespace Jump.Location.Specs
                 var record = controller.FindBest("tkellogg");
                 record.Path.ShouldEqual(@"C:\Users\TKELLOGG");
             }
+
+            [Fact]
+            public void Last_segment_only_starts_with()
+            {
+                dbMock.Setup(x => x.Records).Returns(new[]
+                    {
+                        new Record(@"FS::C:\Users\tkellogg", 10M), 
+                    });
+
+                var record = controller.FindBest("t");
+                record.Path.ShouldEqual(@"C:\Users\tkellogg");
+            }
         }
     }
 }
