@@ -27,15 +27,3 @@ Installation
 Next time you open a PowerShell console Jump-Location will start learning 
 your habits. You'll also have access to the `j` and `jumpstat` aliases.
 
-
-Known Issues
-------------------
-
-This is still an immature tool. I still haven't figured out some things:
-
-* Start tracking from when the console is first started. Right now we don't
-start tracking directories until you first call `Jump-Location`. _[This is 
-fixed if you run `.\Install.ps1`]_
-* Use as normal user. Right now you need to be running as admin in order
-for the database to be persisted to the filesystem. I'm not real sure about
-all the permissions settings and corner cases yet.
