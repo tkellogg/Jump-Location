@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
@@ -12,7 +13,7 @@ namespace Jump.Location
         private bool needsToSave;
         private DirectoryWaitPeriod waitPeriod;
 
-        public CommandController(IDatabase database, IFileStoreProvider fileStore)
+        internal CommandController(IDatabase database, IFileStoreProvider fileStore)
         {
             this.database = database;
             this.fileStore = fileStore;
@@ -20,9 +21,11 @@ namespace Jump.Location
             thread.Start();
         }
 
-        public CommandController(string path)
-            :this(new Database(), new FileStoreProvider(path))
+        public static CommandController Create(string path)
         {
+            var fileStore = new FileStoreProvider(path);
+            var database = fileStore.Revive();
+            return new CommandController(database, fileStore);
         }
 
         public void UpdateLocation(string fullName)
@@ -53,7 +56,7 @@ namespace Jump.Location
                     }
                     catch(Exception e)
                     {
-                        Console.Error.WriteLine("Jump-Location received {0}: {1}", e.GetType().Name, e.Message);
+                        EventLog.WriteEntry("Application", string.Format("{0}\r\n{1}", e, e.StackTrace));
                     }
                 }
                 else Thread.Sleep(0);
