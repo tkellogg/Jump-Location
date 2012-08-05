@@ -1,4 +1,6 @@
-﻿using System.Management.Automation;
+﻿using System;
+using System.IO;
+using System.Management.Automation;
 
 namespace Jump.Location
 {
@@ -6,7 +8,16 @@ namespace Jump.Location
     public class JumpLocationCommand : PSCmdlet
     {
         private static bool _hasRegisteredDirectoryHook;
-        private static readonly CommandController Controller = CommandController.Create(@"C:\Users\Kerianne\jump-location.txt");
+        private static readonly CommandController Controller;
+
+        static JumpLocationCommand()
+        {
+            var home = Environment.GetEnvironmentVariable("USERPROFILE");
+            // TODO: I think there's potential here for a bug
+            home = home ?? @"C:\";
+            var dbLocation = Path.Combine(home, "jump-location.txt");
+            Controller = CommandController.Create(dbLocation);
+        }
 
         /*
          * x1. Figure out how long they stay in the directory
