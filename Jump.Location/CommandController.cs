@@ -68,7 +68,7 @@ namespace Jump.Location
             return GetMatchesForSearchTerm(search).FirstOrDefault();
         }
 
-        internal IEnumerable<IRecord> GetMatchesForSearchTerm(string search)
+        public IEnumerable<IRecord> GetMatchesForSearchTerm(string search)
         {
             var used = new HashSet<string>();
             search = search.ToLower();

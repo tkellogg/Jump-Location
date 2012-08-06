@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Management.Automation;
 
 namespace Jump.Location
@@ -17,6 +19,11 @@ namespace Jump.Location
             home = home ?? @"C:\";
             var dbLocation = Path.Combine(home, "jump-location.txt");
             Controller = CommandController.Create(dbLocation);
+        }
+
+        public static IEnumerable<string> GetTabExpansion(string searchTerm)
+        {
+            return Controller.GetMatchesForSearchTerm(searchTerm).Select(x => x.Path);
         }
 
         /*

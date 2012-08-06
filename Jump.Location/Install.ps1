@@ -4,6 +4,7 @@
 # 2. Setup alias j
 # 3. Setup jumpstat alias (function)
 # 4. Start watching directory changes
+# 5. Register tab expansion
 
 $fullpath = Split-Path -Parent $MyInvocation.MyCommand.Path
 $dllpath = $fullpath + "\Jump.Location.dll"
@@ -16,3 +17,5 @@ function global:Jumpstat() {
 }
 
 Jump-Location -Initialize $true
+
+.\TabExpansion.ps1
