@@ -18,4 +18,4 @@ function global:Jumpstat() {
 
 Jump-Location -Initialize $true
 
-.\TabExpansion.ps1
+& $($fullpath + "\TabExpansion.ps1")
