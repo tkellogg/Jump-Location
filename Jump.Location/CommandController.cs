@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 
@@ -24,7 +25,7 @@ namespace Jump.Location
         public static CommandController Create(string path)
         {
             var fileStore = new FileStoreProvider(path);
-            var database = fileStore.Revive();
+            var database = File.Exists(path) ? fileStore.Revive() : new Database();
             return new CommandController(database, fileStore);
         }
 
