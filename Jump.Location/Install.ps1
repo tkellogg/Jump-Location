@@ -1,21 +1,53 @@
-﻿# Install.ps1
-#
-# 1. Install Jump-Location
-# 2. Setup alias j
-# 3. Setup jumpstat alias (function)
-# 4. Start watching directory changes
-# 5. Register tab expansion
+﻿# Adapted from posh-git's install.ps1
+# Copyright (c) 2010-2011 Keith Dahlby and contributors
 
-$fullpath = Split-Path -Parent $MyInvocation.MyCommand.Path
-$dllpath = $fullpath + "\Jump.Location.dll"
+param(
+	[switch]$WhatIf = $false,
+	[string] $WhichProfile = $PROFILE.CurrentUserAllHosts
+)
 
-Import-Module $dllpath -Global -DisableNameChecking
-New-Alias -Name j -Value Jump-Location -Scope Global
-
-function global:Jumpstat() {
-	Jump-Location -Status $true
+if($PSVersionTable.PSVersion.Major -lt 2) {
+    Write-Warning "Find-String requires PowerShell 2.0 or better; you have version $($Host.Version)."
+    return
 }
 
-Jump-Location -Initialize $true
+if(!(Test-Path $WhichProfile)) {
+    Write-Host "Creating PowerShell profile...`n$WhichProfile"
+    New-Item $WhichProfile -Force -Type File -ErrorAction Stop -WhatIf:$WhatIf > $null
+}
 
-& $($fullpath + "\TabExpansion.ps1")
+$installDir = Split-Path $MyInvocation.MyCommand.Path -Parent
+
+# Adapted from http://www.west-wind.com/Weblog/posts/197245.aspx
+function Get-FileEncoding($Path) {
+    $bytes = [byte[]](Get-Content $Path -Encoding byte -ReadCount 4 -TotalCount 4)
+
+    if(!$bytes) { return 'utf8' }
+
+    switch -regex ('{0:x2}{1:x2}{2:x2}{3:x2}' -f $bytes[0],$bytes[1],$bytes[2],$bytes[3]) {
+        '^efbbbf'   { return 'utf8' }
+        '^2b2f76'   { return 'utf7' }
+        '^fffe'     { return 'unicode' }
+        '^feff'     { return 'bigendianunicode' }
+        '^0000feff' { return 'utf32' }
+        default     { return 'ascii' }
+    }
+}
+
+$profileLine = ". '$installDir\Load.ps1'"
+if(Select-String -Path $WhichProfile -Pattern $profileLine -Quiet -SimpleMatch) {
+    Write-Host "It seems Jump-Location is already installed..."
+    return
+}
+
+Write-Host "Adding Jump-Location to profile..."
+@"
+
+# Load Jump-Location profile
+$profileLine
+
+"@ | Out-File $WhichProfile -Append -WhatIf:$WhatIf -Encoding (Get-FileEncoding $WhichProfile)
+
+Write-Host 'Find-String sucessfully installed!'
+Write-Host 'Please reload your profile for the changes to take effect:'
+Write-Host "    . $WhichProfile"
