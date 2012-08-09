@@ -49,10 +49,8 @@ I'm trying to make this as close to [autojump][1] as possible. While its
 still lacking a lot of the features that Autojump has, it still has enough
 to be very useful. Of the things left to implement, most notable are:
 
-* Tab completion
 * Multiple arguments
 * Fuzzy matching
-* _[bug]_ Multiple consoles will interfere with each other
 
 
 Installation
