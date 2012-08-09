@@ -187,6 +187,17 @@ namespace Jump.Location.Specs
                 record.Select(x => x.Path).ToArray()
                     .ShouldEqual(new[]{@"C:\Users\tkellogg3", @"C:\Users\tkellogg2", @"C:\Users\tkellogg"});
             }
+
+            [Fact]
+            public void It_updates_the_database_if_filesystem_is_newer()
+            {
+                fsMock.Setup(x => x.LastChangedDate).Returns(DateTime.Now.AddHours(1));
+                fsMock.Setup(x => x.Revive()).Returns(Mock.Of<IDatabase>());
+
+                controller.FindBest("");
+
+                fsMock.VerifyAll();
+            }
         }
     }
 }

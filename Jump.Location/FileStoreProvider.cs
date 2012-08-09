@@ -8,7 +8,20 @@ namespace Jump.Location
     {
         void Save(IDatabase database);
         IDatabase Revive();
+        DateTime LastChangedDate { get; }
     }
+
+    public class FileStoreUpdatedEventArgs : EventArgs
+    {
+        public FileStoreUpdatedEventArgs(IDatabase database)
+        {
+            UpdatedDatabase = database;
+        }
+
+        public IDatabase UpdatedDatabase { get; private set; }
+    }
+
+    public delegate void FileStoreUpdated(object sender, FileStoreUpdatedEventArgs args);
 
     class FileStoreProvider : IFileStoreProvider
     {
@@ -17,6 +30,14 @@ namespace Jump.Location
         public FileStoreProvider(string path)
         {
             this.path = path;
+        }
+
+        public event FileStoreUpdated FileStoreUpdated;
+
+        private void OnFileStoreUpdated(object sender, FileStoreUpdatedEventArgs args)
+        {
+            if (FileStoreUpdated != null)
+                FileStoreUpdated(sender, args);
         }
 
         public void Save(IDatabase database)
@@ -42,5 +63,7 @@ namespace Jump.Location
             }
             return db;
         }
+
+        public DateTime LastChangedDate { get { return File.GetLastWriteTime(path); } }
     }
 }

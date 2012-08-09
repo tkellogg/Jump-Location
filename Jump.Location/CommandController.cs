@@ -9,10 +9,11 @@ namespace Jump.Location
 {
     class CommandController
     {
-        private readonly IDatabase database;
+        private IDatabase database;
         private readonly IFileStoreProvider fileStore;
         private bool needsToSave;
         private DirectoryWaitPeriod waitPeriod;
+        private DateTime lastSaveDate = DateTime.Now;
 
         internal CommandController(IDatabase database, IFileStoreProvider fileStore)
         {
@@ -54,6 +55,7 @@ namespace Jump.Location
                     {
                         needsToSave = false;
                         fileStore.Save(database);
+                        lastSaveDate = DateTime.Now;
                     }
                     catch(Exception e)
                     {
@@ -64,6 +66,13 @@ namespace Jump.Location
             }
         }
 
+        private void ReloadIfNecessary()
+        {
+            if (fileStore.LastChangedDate <= lastSaveDate) return;
+            database = fileStore.Revive();
+            lastSaveDate = DateTime.Now;
+        }
+
         public IRecord FindBest(string search)
         {
             return GetMatchesForSearchTerm(search).FirstOrDefault();
@@ -71,6 +80,7 @@ namespace Jump.Location
 
         public IEnumerable<IRecord> GetMatchesForSearchTerm(string search)
         {
+            ReloadIfNecessary();
             var used = new HashSet<string>();
             search = search.ToLower();
 

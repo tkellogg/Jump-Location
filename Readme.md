@@ -59,10 +59,11 @@ Installation
 ------------
 
 1. Download [the zip file][4]
-2. Unzip to `~\Desktop\Jump-Location`
+2. Unzip 
 3. Open a PowerShell console
-4. Edit your profile: `notepad $PROFILE.CurrentUserAllHosts`
-5. Add a line to execute the install script: `~\Desktop\Jump-Location\Install.ps1`
+4. Run `.\Install.ps1`. You may need to allow remote scripts by running 
+`Set-ExecutionPolicy -RemoteSigned`. You may also have to right-click `Install.ps1`
+and Unblock it from the properties window.
 
 Next time you open a PowerShell console Jump-Location will start learning 
 your habits. You'll also have access to the `j` and `jumpstat` aliases.
