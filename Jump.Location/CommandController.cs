@@ -105,9 +105,9 @@ namespace Jump.Location
             }
 
             foreach (var record in GetOrderedRecords()
+                    .Where(record => !used.Contains(record.Path))
                     .Where(x => x.PathSegments.Last().Contains(search)))
             {
-                if (used.Contains(record.Path)) continue;
                 used.Add(record.Path);
                 yield return record;
             }
@@ -115,17 +115,17 @@ namespace Jump.Location
             if (isLast) yield break;
 
             foreach (var record in GetOrderedRecords()
+                    .Where(record => !used.Contains(record.Path))
                     .Where(x => x.PathSegments.Any(s => s.StartsWith(search))))
             {
-                if (used.Contains(record.Path)) continue;
                 used.Add(record.Path);
                 yield return record;
             }
 
             foreach (var record in GetOrderedRecords()
+                    .Where(record => !used.Contains(record.Path))
                     .Where(x => x.PathSegments.Any(s => s.Contains(search))))
             {
-                if (used.Contains(record.Path)) continue;
                 used.Add(record.Path);
                 yield return record;
             }

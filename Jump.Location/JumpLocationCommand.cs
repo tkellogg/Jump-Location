@@ -38,8 +38,8 @@ namespace Jump.Location
          * x9. Get-JumpStat
          */
 
-        [Parameter(Position = 0)]
-        public string Directory { get; set; }
+        [Parameter(ValueFromRemainingArguments = true)]
+        public string[] Directory { get; set; }
 
         [Parameter]
         public bool Status { get; set; }
@@ -85,14 +85,14 @@ namespace Jump.Location
             if (Directory == null) return;
 
             // If it has a \ it's probably a full path, so just process it
-            if (Directory.Contains('\\'))
+            if (Directory.Length == 1 && Directory.First().Contains('\\'))
             {
-                ChangeDirectory(Directory);
+                ChangeDirectory(Directory.First());
                 return;
             }
 
             var best = Controller.FindBest(Directory);
-            if (best == null) throw new LocationNotFoundException(Directory);
+            if (best == null) throw new LocationNotFoundException(Directory.First());
 
             var fullPath = best.Path;
             ChangeDirectory(fullPath);
