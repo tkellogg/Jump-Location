@@ -33,7 +33,7 @@ namespace Jump.Location
          * x4. Make MSI installer for easy use
          * 5. Weighting algorithm - match what Autojump does to increase weights
          * 6. Match what Autojump does to degrade weights
-         * 7. Multiple args - last arg is a tail match, previous args match previous segments
+         * x7. Multiple args - last arg is a tail match, previous args match previous segments
          * x8. Tab completion - list 5 best matches
          * x9. Get-JumpStat
          */

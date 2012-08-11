@@ -2,10 +2,10 @@ Jump-Location: A cd that learns
 =====================
 
 If you spend any time in a console you know that `cd` is by far the most
-common command that you issue. You'll open up a console to `C:\Users\me`
-or `C:\Windows\system32` and then issue a `cd C:\work\Website`. 
+common command that you issue. I'll open up a console to it's default location
+in `C:\Users\tkellogg` or `C:\Windows\system32` and then issue a `cd C:\work\MyProject`. 
 `Jump-Location` is a cmdlet lets you issue a `j we` to jump 
-directly to `C:\work\Website`. 
+directly to `C:\work\MyProject`. 
 
 It learns your behavior by keeping track of how long you spend in certain
 directories and favoring them over the ones you don't care about.  You don't 
@@ -26,6 +26,16 @@ give it a 2-3 character hint. For instance, on mine I can do:
 * `j de` -> `C:\Users\tkellogg\code\Jump-Location\bin\Debug`
 * `j doc` -> `C:\Users\tkellogg\Documents`
 
+What if you have several projects and you want to get to the Debug directory
+of one that you don't use very often? You're `jumpstat` might look like this:
+
+    255    C:\Users\tkellogg\code\Jump-Location\bin\Debug
+		50     C:\Users\tkellogg\code\MongoDB.FSharp\bin\Debug
+
+Using `j de` will jump to `Jump-Location\bin\Debug`, but what if you really want
+`MongoDB.FSharp\bin\Debug`? You can issue a `j mo d`. `mo` matches `MongoDB.FSharp`
+and `d` matches `Debug`.
+
 You can use `jumpstat` to see what's in the database. Right now, `jumpstat` 
 just returns a wall of text, but in the future I'd like to follow the 
 PowerShell paradigm and return a list of objects that you can edit.
@@ -40,17 +50,6 @@ PowerShell also has [a list of approved verbs][3].
 `Jump` is not on that list, but I chose it anyway because it's most 
 descriptive of what you're actually trying to do to `Location`. It's also
 most similar to "autojump".
-
-
-What still needs to be done
----------------------------
-
-I'm trying to make this as close to [autojump][1] as possible. While its
-still lacking a lot of the features that Autojump has, it still has enough
-to be very useful. Of the things left to implement, most notable are:
-
-* Multiple arguments
-* Fuzzy matching
 
 
 Installation
