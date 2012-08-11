@@ -42,10 +42,10 @@ namespace Jump.Location
         public string[] Directory { get; set; }
 
         [Parameter]
-        public bool Status { get; set; }
+        public SwitchParameter Status { get; set; }
 
         [Parameter]
-        public bool Initialize { get; set; }
+        public SwitchParameter Initialize { get; set; }
 
         public static void UpdateTime(string location)
         {

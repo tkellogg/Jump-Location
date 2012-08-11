@@ -13,9 +13,9 @@ Import-Module $dllpath -Global -DisableNameChecking
 New-Alias -Name j -Value Jump-Location -Scope Global
 
 function global:Jumpstat() {
-	Jump-Location -Status $true
+	Jump-Location -Status
 }
 
-Jump-Location -Initialize $true
+Jump-Location -Initialize
 
 & $($fullpath + "\TabExpansion.ps1")
