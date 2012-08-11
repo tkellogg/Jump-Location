@@ -34,7 +34,7 @@ namespace Jump.Location
          * 5. Weighting algorithm - match what Autojump does to increase weights
          * 6. Match what Autojump does to degrade weights
          * 7. Multiple args - last arg is a tail match, previous args match previous segments
-         * 8. Tab completion - list 5 best matches
+         * x8. Tab completion - list 5 best matches
          * x9. Get-JumpStat
          */
 

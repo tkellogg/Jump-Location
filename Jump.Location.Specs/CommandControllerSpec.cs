@@ -137,8 +137,10 @@ namespace Jump.Location.Specs
                 record.Path.ShouldEqual(@"C:\Users\tkellogg");
             }
 
+            #region Multiple arguments
+
             [Fact]
-            public void Exact_match_of_middle_segment()
+            public void Doesnt_match_only_middle_segments()
             {
                 dbMock.Setup(x => x.Records).Returns(new[]
                     {
@@ -146,32 +148,46 @@ namespace Jump.Location.Specs
                     });
 
                 var record = controller.FindBest("users");
-                record.Path.ShouldEqual(@"C:\Users\tkellogg");
+                record.ShouldBeNull();
             }
 
             [Fact]
-            public void Middle_segment_starts_with_search_term()
+            public void Exact_match_of_middle_segment_and_beginning_of_last()
             {
                 dbMock.Setup(x => x.Records).Returns(new[]
                     {
                         new Record(@"FS::C:\Users\tkellogg", 10M), 
                     });
 
-                var record = controller.FindBest("user");
+                var record = controller.FindBest("users", "tk");
                 record.Path.ShouldEqual(@"C:\Users\tkellogg");
             }
 
             [Fact]
-            public void Substring_of_middle_segment()
+            public void Middle_segment_starts_with_search_term_and_beginning_of_last()
             {
                 dbMock.Setup(x => x.Records).Returns(new[]
                     {
                         new Record(@"FS::C:\Users\tkellogg", 10M), 
                     });
 
-                var record = controller.FindBest("ers");
+                var record = controller.FindBest("user", "tk");
                 record.Path.ShouldEqual(@"C:\Users\tkellogg");
             }
+
+            [Fact]
+            public void Substring_of_middle_segment_and_beginning_of_last()
+            {
+                dbMock.Setup(x => x.Records).Returns(new[]
+                    {
+                        new Record(@"FS::C:\Users\tkellogg", 10M), 
+                    });
+
+                var record = controller.FindBest("ers", "tk");
+                record.Path.ShouldEqual(@"C:\Users\tkellogg");
+            }
+
+            #endregion
 
             [Fact]
             public void Matches_are_ordered_by_weights()

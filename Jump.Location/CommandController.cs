@@ -73,17 +73,30 @@ namespace Jump.Location
             lastSaveDate = DateTime.Now;
         }
 
-        public IRecord FindBest(string search)
+        public IRecord FindBest(params string[] search)
         {
             return GetMatchesForSearchTerm(search).FirstOrDefault();
         }
 
-        public IEnumerable<IRecord> GetMatchesForSearchTerm(string search)
+        public IEnumerable<IRecord> GetMatchesForSearchTerm(params string[] searchTerms)
         {
             ReloadIfNecessary();
             var used = new HashSet<string>();
-            search = search.ToLower();
 
+            var matches = new List<IRecord>();
+            for (var i = 0; i < searchTerms.Length; i++)
+            {
+                var isLast = i == searchTerms.Length - 1;
+                var newMatches = GetMatchesForSingleSearchTerm(searchTerms[i], used, isLast);
+                matches = i == 0 ? newMatches.ToList() : matches.Intersect(newMatches).ToList();
+            }
+
+            return matches;
+        }
+
+        private IEnumerable<IRecord> GetMatchesForSingleSearchTerm(string search, HashSet<string> used, bool isLast)
+        {
+            search = search.ToLower();
             foreach (var record in GetOrderedRecords()
                     .Where(x => x.PathSegments.Last().StartsWith(search)))
             {
@@ -98,6 +111,8 @@ namespace Jump.Location
                 used.Add(record.Path);
                 yield return record;
             }
+
+            if (isLast) yield break;
 
             foreach (var record in GetOrderedRecords()
                     .Where(x => x.PathSegments.Any(s => s.StartsWith(search))))
@@ -114,7 +129,7 @@ namespace Jump.Location
                 used.Add(record.Path);
                 yield return record;
             }
-        }
+        } 
 
         private IEnumerable<IRecord> GetOrderedRecords()
         {
