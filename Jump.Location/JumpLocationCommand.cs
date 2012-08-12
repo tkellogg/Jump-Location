@@ -69,7 +69,8 @@ namespace Jump.Location
         {
             if (Status)
             {
-                Controller.PrintStatus();
+                foreach(var record in Controller.GetOrderedRecords())
+                    WriteObject(record);
                 return;
             }
 

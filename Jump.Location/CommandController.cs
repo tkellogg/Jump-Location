@@ -129,9 +129,9 @@ namespace Jump.Location
                 used.Add(record.Path);
                 yield return record;
             }
-        } 
+        }
 
-        private IEnumerable<IRecord> GetOrderedRecords()
+        public IEnumerable<IRecord> GetOrderedRecords()
         {
             return database.Records.OrderByDescending(x => x.Weight);
         }
