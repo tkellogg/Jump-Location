@@ -16,6 +16,13 @@ function global:Jumpstat() {
 	Jump-Location -Status
 }
 
+function global:PushJ {
+	Param (
+		[Parameter(ValueFromRemainingArguments=$true)] $args
+	)
+	Jump-Location @args -Push
+}
+
 Jump-Location -Initialize
 
 & $($fullpath + "\TabExpansion.ps1")

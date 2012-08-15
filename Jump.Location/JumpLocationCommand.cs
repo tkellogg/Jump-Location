@@ -47,6 +47,9 @@ namespace Jump.Location
         [Parameter]
         public SwitchParameter Initialize { get; set; }
 
+        [Parameter]
+        public SwitchParameter Push { get; set; }
+
         public static void UpdateTime(string location)
         {
             Controller.UpdateLocation(location);
@@ -101,7 +104,8 @@ namespace Jump.Location
 
         private void ChangeDirectory(string fullPath)
         {
-            InvokeCommand.InvokeScript(string.Format("Set-Location {0}", fullPath));
+            var verb = Push ? "Push" : "Set";
+            InvokeCommand.InvokeScript(string.Format("{1}-Location {0}", fullPath, verb));
         }
     }
 }
