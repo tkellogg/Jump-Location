@@ -62,7 +62,7 @@ namespace Jump.Location
                         EventLog.WriteEntry("Application", string.Format("{0}\r\n{1}", e, e.StackTrace));
                     }
                 }
-                else Thread.Sleep(0);
+                else Thread.Sleep(10);
             }
         }
 
