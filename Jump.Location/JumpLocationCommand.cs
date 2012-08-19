@@ -27,15 +27,11 @@ namespace Jump.Location
         }
 
         /*
-         * x1. Figure out how long they stay in the directory
-         * x2. Log occurences of filename / weight
-         * x3. Tail matches - search matches beginning of last segment of path
-         * x4. Make MSI installer for easy use
-         * 5. Weighting algorithm - match what Autojump does to increase weights
-         * 6. Match what Autojump does to degrade weights
-         * x7. Multiple args - last arg is a tail match, previous args match previous segments
-         * x8. Tab completion - list 5 best matches
-         * x9. Get-JumpStat
+         * 1. Save manipulated jumpstat values
+         * 2. -Query switch for returning first string
+         * 3. Local search. `j . blah` will only match dirs under cwd. Using `.` will also search outside the DB.
+         * 4. -Purge (not terribly high priority)
+         * 5. Better PS documentation
          */
 
         [Parameter(ValueFromRemainingArguments = true)]

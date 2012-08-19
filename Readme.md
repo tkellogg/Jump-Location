@@ -4,7 +4,7 @@ Jump-Location: A cd that learns
 If you spend any time in a console you know that `cd` is by far the most
 common command that you issue. I'll open up a console to it's default location
 in `C:\Users\tkellogg` or `C:\Windows\system32` and then issue a `cd C:\work\MyProject`. 
-`Jump-Location` is a cmdlet lets you issue a `j we` to jump 
+`Jump-Location` is a cmdlet lets you issue a `j my` to jump 
 directly to `C:\work\MyProject`. 
 
 It learns your behavior by keeping track of how long you spend in certain
@@ -27,18 +27,31 @@ give it a 2-3 character hint. For instance, on mine I can do:
 * `j doc` -> `C:\Users\tkellogg\Documents`
 
 What if you have several projects and you want to get to the Debug directory
-of one that you don't use very often? You're `jumpstat` might look like this:
+of one that you don't use very often? If you're `jumpstat` looks like this:
 
     255    C:\Users\tkellogg\code\Jump-Location\bin\Debug
 		50     C:\Users\tkellogg\code\MongoDB.FSharp\bin\Debug
 
-Using `j de` will jump to `Jump-Location\bin\Debug`, but what if you really want
-`MongoDB.FSharp\bin\Debug`? You can issue a `j mo d`. `mo` matches `MongoDB.FSharp`
-and `d` matches `Debug`.
+Using `j de` will jump to `Jump-Location\bin\Debug`. But use something like
+`j mo d` if you really want to go to `MongoDB.FSharp\bin\Debug`. You can 
+issue a `j mo d`. `mo` matches `MongoDB.FSharp` and `d` matches `Debug`.
 
-You can use `jumpstat` to see what's in the database. Right now, `jumpstat` 
-just returns a wall of text, but in the future I'd like to follow the 
-PowerShell paradigm and return a list of objects that you can edit.
+
+Quick Primer on `jumpstat`
+--------------------------
+
+You can use `jumpstat` to see what's in the database. In tradition with `autojump`,
+the database is saved to `~\jump-location.txt`. You can open up that file and
+make changes. The file will auto-load into any open powershell sessions.
+
+Since we're in Powershell (and not legacy Bash) `jumpstat` returns _objects_. 
+This means that you don't ever have to know anything about `~\jump-location.txt`.
+You can manipulate the objects it returns. For instance, this is valid:
+
+```
+PS> $stats = jumpstat
+PS> $stats[10].Weight = 100
+```
 
 
 Why `Jump-Location`?
