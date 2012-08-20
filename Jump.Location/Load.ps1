@@ -14,9 +14,7 @@ if (-Not (Get-Command Jump-Location -ErrorAction SilentlyContinue)) {
 	Import-Module $dllpath -Global -DisableNameChecking
 	New-Alias -Name j -Value Jump-Location -Scope Global
 
-	function global:Jumpstat() {
-		Jump-Location -Status
-	}
+	New-Alias -Name jumpstat -Value Get-JumpStatus -Scope Global
 
 	function global:PushJ {
 		Param (

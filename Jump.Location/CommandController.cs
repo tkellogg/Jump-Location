@@ -14,6 +14,7 @@ namespace Jump.Location
         private bool needsToSave;
         private DirectoryWaitPeriod waitPeriod;
         private DateTime lastSaveDate = DateTime.Now;
+        private static CommandController defaultInstance;
 
         internal CommandController(IDatabase database, IFileStoreProvider fileStore)
         {
@@ -21,6 +22,22 @@ namespace Jump.Location
             this.fileStore = fileStore;
             var thread = new Thread(SaveLoop);
             thread.Start();
+        }
+
+        public static CommandController DefaultInstance
+        {
+            get
+            {
+                if (defaultInstance == null)
+                {
+                    var home = Environment.GetEnvironmentVariable("USERPROFILE");
+                    // TODO: I think there's potential here for a bug
+                    home = home ?? @"C:\";
+                    var dbLocation = Path.Combine(home, "jump-location.txt");
+                    defaultInstance = Create(dbLocation);
+                }
+                return defaultInstance;
+            }
         }
 
         public static CommandController Create(string path)

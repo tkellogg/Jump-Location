@@ -10,16 +10,7 @@ namespace Jump.Location
     public class JumpLocationCommand : PSCmdlet
     {
         private static bool _hasRegisteredDirectoryHook;
-        private static readonly CommandController Controller;
-
-        static JumpLocationCommand()
-        {
-            var home = Environment.GetEnvironmentVariable("USERPROFILE");
-            // TODO: I think there's potential here for a bug
-            home = home ?? @"C:\";
-            var dbLocation = Path.Combine(home, "jump-location.txt");
-            Controller = CommandController.Create(dbLocation);
-        }
+        private static readonly CommandController Controller = CommandController.DefaultInstance;
 
         public static IEnumerable<string> GetTabExpansion(string searchTerm)
         {
@@ -36,9 +27,6 @@ namespace Jump.Location
 
         [Parameter(ValueFromRemainingArguments = true)]
         public string[] Directory { get; set; }
-
-        [Parameter]
-        public SwitchParameter Status { get; set; }
 
         [Parameter]
         public SwitchParameter Initialize { get; set; }
@@ -66,13 +54,6 @@ namespace Jump.Location
         
         protected override void ProcessRecord()
         {
-            if (Status)
-            {
-                foreach(var record in Controller.GetOrderedRecords())
-                    WriteObject(record);
-                return;
-            }
-
             // This lets us do just `Jump-Location` to initialize everything in the profile script
             if (Initialize)
             {
