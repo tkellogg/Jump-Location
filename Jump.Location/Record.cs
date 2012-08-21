@@ -46,7 +46,7 @@ namespace Jump.Location
             }
         }
 
-        public decimal Weight { get; private set; }
+        public decimal Weight { get; set; }
 
         public string[] PathSegments
         {

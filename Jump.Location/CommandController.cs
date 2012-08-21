@@ -57,7 +57,7 @@ namespace Jump.Location
             Save();
         }
 
-        private void Save()
+        public void Save()
         {
             needsToSave = true;
         }

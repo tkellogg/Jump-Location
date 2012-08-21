@@ -16,6 +16,9 @@ namespace Jump.Location
         [Parameter]
         public SwitchParameter First { get; set; }
 
+        [Parameter]
+        public SwitchParameter Save { get; set; }
+
         protected override void ProcessRecord()
         {
             if (Directory == null || Directory.Length == 0) 
@@ -26,6 +29,12 @@ namespace Jump.Location
 
         private void ProcessSearch(IEnumerable<IRecord> records)
         {
+            if (Save)
+            {
+                Controller.Save();
+                return;
+            }
+
             if (First)
             {
                 var record = records.FirstOrDefault();

@@ -23,7 +23,7 @@ namespace Jump.Location
          * 3. Local search. `j . blah` will only match dirs under cwd. Using `.` will also search outside the DB.
          * 4. -Purge (not terribly high priority)
          * 5. Better PS documentation
-         * 6. jumpstat -First, for returning just the first
+         * x6. jumpstat -First, for returning just the first
          */
 
         [Parameter(ValueFromRemainingArguments = true)]
