@@ -23,6 +23,13 @@ if (-Not (Get-Command Jump-Location -ErrorAction SilentlyContinue)) {
 		Jump-Location @args -Push
 	}
 
+	function global:getj {
+		Param (
+			[Parameter(ValueFromRemainingArguments=$true)] $args
+		)
+		jumpstat -First @args
+	}
+
 	Jump-Location -Initialize
 
 	& $($fullpath + "\TabExpansion.ps1")
