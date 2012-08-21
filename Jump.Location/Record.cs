@@ -13,7 +13,7 @@ namespace Jump.Location
         void AddTimeSpent(TimeSpan timeSpan);
     }
 
-    class Record : IRecord
+    public class Record : IRecord
     {
         private string[] pathSegments;
 
@@ -61,6 +61,11 @@ namespace Jump.Location
         public void AddTimeSpent(TimeSpan timeSpan)
         {
             Weight += (decimal) timeSpan.TotalSeconds;
+        }
+
+        public override string ToString()
+        {
+            return Path;
         }
     }
 }

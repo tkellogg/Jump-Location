@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Management.Automation;
 
 namespace Jump.Location
@@ -12,6 +13,9 @@ namespace Jump.Location
         [Parameter(ValueFromRemainingArguments = true)]
         public string[] Directory { get; set; }
 
+        [Parameter]
+        public SwitchParameter First { get; set; }
+
         protected override void ProcessRecord()
         {
             if (Directory == null || Directory.Length == 0) 
@@ -22,6 +26,14 @@ namespace Jump.Location
 
         private void ProcessSearch(IEnumerable<IRecord> records)
         {
+            if (First)
+            {
+                var record = records.FirstOrDefault();
+                if (record != null) 
+                    WriteObject(record);
+                return;
+            }
+
             foreach (var record in records)
                 WriteObject(record);
         }
