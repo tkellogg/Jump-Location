@@ -30,6 +30,13 @@ if (-Not (Get-Command Jump-Location -ErrorAction SilentlyContinue)) {
 		jumpstat -First @args
 	}
 
+	function global:xj {
+		Param (
+			[Parameter(ValueFromRemainingArguments=$true)] $args
+		)
+		explorer $(jumpstat -First @args)
+	}
+
 	Jump-Location -Initialize
 
 	& $($fullpath + "\TabExpansion.ps1")
