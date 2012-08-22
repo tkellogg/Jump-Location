@@ -18,10 +18,13 @@ namespace Jump.Location
         [Parameter(ParameterSetName = "Save", HelpMessage = "Saves any pending changes from setting weights on records explicitly.")]
         public SwitchParameter Save { get; set; }
 
+        [Parameter(ParameterSetName = "Query", HelpMessage = "Includes all results, even if the weight is negative.")]
+        public SwitchParameter All { get; set; }
+
         protected override void ProcessRecord()
         {
-            if (Query == null || Query.Length == 0) 
-                ProcessSearch(Controller.GetOrderedRecords());
+            if (All || Query == null || Query.Length == 0) 
+                ProcessSearch(Controller.GetOrderedRecords(All));
             else 
                 ProcessSearch(Controller.GetMatchesForSearchTerm(Query));
         }

@@ -148,10 +148,10 @@ namespace Jump.Location
             }
         }
 
-        public IEnumerable<IRecord> GetOrderedRecords()
+        public IEnumerable<IRecord> GetOrderedRecords(bool includeAll = false)
         {
             return from record in database.Records
-                   where record.Weight >= 0
+                   where record.Weight >= 0 || includeAll
                    orderby record.Weight descending
                    select record;
         }

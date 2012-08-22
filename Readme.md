@@ -50,8 +50,13 @@ You can manipulate the objects it returns. For instance, this is valid:
 
 ```
 PS> $stats = jumpstat
-PS> $stats[10].Weight = 100
+PS> $stats[10].Weight = -1
+PS> jumpstat -Save
 ```
+
+Setting a weight to a negative number like that will cause it to be blacklisted
+from all jump results. Use the `jumpstat -All` option to see negative weights
+included in the jumpstat result set.
 
 
 Why `Jump-Location`?
