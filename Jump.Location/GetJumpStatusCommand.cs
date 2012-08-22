@@ -1,30 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 
 namespace Jump.Location
 {
-    [Cmdlet("Get", "JumpStatus")]
+    [Cmdlet("Get", "JumpStatus", DefaultParameterSetName = "Query")]
     public class GetJumpStatusCommand : PSCmdlet
     {
         private static readonly CommandController Controller = CommandController.DefaultInstance;
 
-        [Parameter(ValueFromRemainingArguments = true)]
-        public string[] Directory { get; set; }
+        [Parameter(ParameterSetName = "Query", ValueFromRemainingArguments = true)]
+        public string[] Query { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "Query", HelpMessage = "Only retrieve the first record matching the query. Same as `getj`")]
         public SwitchParameter First { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "Save", HelpMessage = "Saves any pending changes from setting weights on records explicitly.")]
         public SwitchParameter Save { get; set; }
 
         protected override void ProcessRecord()
         {
-            if (Directory == null || Directory.Length == 0) 
+            if (Query == null || Query.Length == 0) 
                 ProcessSearch(Controller.GetOrderedRecords());
             else 
-                ProcessSearch(Controller.GetMatchesForSearchTerm(Directory));
+                ProcessSearch(Controller.GetMatchesForSearchTerm(Query));
         }
 
         private void ProcessSearch(IEnumerable<IRecord> records)

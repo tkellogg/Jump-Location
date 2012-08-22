@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 
 namespace Jump.Location
 {
-    [Cmdlet("Jump", "Location")]
+    [Cmdlet("Jump", "Location", DefaultParameterSetName = "Query")]
     public class JumpLocationCommand : PSCmdlet
     {
         private static bool _hasRegisteredDirectoryHook;
@@ -24,16 +22,17 @@ namespace Jump.Location
          * 4. -Purge (not terribly high priority)
          * 5. Better PS documentation
          * x6. jumpstat -First, for returning just the first
-         * 7. Negative Weight removes from the gene pool
+         * x7. Negative Weight removes from the gene pool
          */
 
-        [Parameter(ValueFromRemainingArguments = true)]
-        public string[] Directory { get; set; }
+        [Parameter(ParameterSetName = "Query", ValueFromRemainingArguments = true)]
+        public string[] Query { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "Initialize", 
+            HelpMessage = "Initialize Jump-Location by starting to listen to directory changes.")]
         public SwitchParameter Initialize { get; set; }
 
-        [Parameter]
+        [Parameter(ParameterSetName = "Query", HelpMessage = "Use pushd instead of cd to change directory. Same as `pushj`")]
         public SwitchParameter Push { get; set; }
 
         public static void UpdateTime(string location)
@@ -65,17 +64,17 @@ namespace Jump.Location
                 return;
             }
 
-            if (Directory == null) return;
+            if (Query == null) return;
 
             // If it has a \ it's probably a full path, so just process it
-            if (Directory.Length == 1 && Directory.First().Contains('\\'))
+            if (Query.Length == 1 && Query.First().Contains('\\'))
             {
-                ChangeDirectory(Directory.First());
+                ChangeDirectory(Query.First());
                 return;
             }
 
-            var best = Controller.FindBest(Directory);
-            if (best == null) throw new LocationNotFoundException(Directory.First());
+            var best = Controller.FindBest(Query);
+            if (best == null) throw new LocationNotFoundException(Query.First());
 
             var fullPath = best.Path;
             ChangeDirectory(fullPath);
