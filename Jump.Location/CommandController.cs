@@ -150,7 +150,10 @@ namespace Jump.Location
 
         public IEnumerable<IRecord> GetOrderedRecords()
         {
-            return database.Records.OrderByDescending(x => x.Weight);
+            return from record in database.Records
+                   where record.Weight >= 0
+                   orderby record.Weight descending
+                   select record;
         }
 
         public void PrintStatus()

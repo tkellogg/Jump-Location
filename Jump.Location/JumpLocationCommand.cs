@@ -18,12 +18,13 @@ namespace Jump.Location
         }
 
         /*
-         * 1. Save manipulated jumpstat values
+         * x1. Save manipulated jumpstat values
          * x2. -Query switch for returning first string
          * 3. Local search. `j . blah` will only match dirs under cwd. Using `.` will also search outside the DB.
          * 4. -Purge (not terribly high priority)
          * 5. Better PS documentation
          * x6. jumpstat -First, for returning just the first
+         * 7. Negative Weight removes from the gene pool
          */
 
         [Parameter(ValueFromRemainingArguments = true)]

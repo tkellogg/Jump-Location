@@ -205,6 +205,18 @@ namespace Jump.Location.Specs
             }
 
             [Fact]
+            public void It_doesnt_include_negative_weights()
+            {
+                dbMock.Setup(x => x.Records).Returns(new[]
+                    {
+                        new Record(@"FS::C:\Users\foo", -10M), 
+                    });
+
+                var record = controller.GetMatchesForSearchTerm("foo");
+                record.Any().ShouldBeFalse("Negative record should not have been matched");
+            }
+
+            [Fact]
             public void It_updates_the_database_if_filesystem_is_newer()
             {
                 fsMock.Setup(x => x.LastChangedDate).Returns(DateTime.Now.AddHours(1));
