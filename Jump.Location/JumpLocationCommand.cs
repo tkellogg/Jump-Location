@@ -12,7 +12,15 @@ namespace Jump.Location
 
         public static IEnumerable<string> GetTabExpansion(string searchTerm)
         {
-            return Controller.GetMatchesForSearchTerm(searchTerm).Select(x => x.Path);
+            return Controller.GetMatchesForSearchTerm(searchTerm).Select(GetResultPath);
+        }
+
+        private static string GetResultPath(IRecord record)
+        {
+            var candidate = record.Path;
+            if (candidate.Contains(" "))
+                return string.Format("\"{0}\"", candidate);
+            return candidate;
         }
 
         /*
@@ -76,7 +84,7 @@ namespace Jump.Location
             var best = Controller.FindBest(Query);
             if (best == null) throw new LocationNotFoundException(Query.First());
 
-            var fullPath = best.Path;
+            var fullPath = GetResultPath(best);
             ChangeDirectory(fullPath);
         }
 
