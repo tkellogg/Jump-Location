@@ -74,9 +74,10 @@ Installation
 ------------
 
 1. Download [the zip file][4]
-2. Unzip 
-3. Open a PowerShell console
-4. Run `.\Install.ps1`. You may need to allow remote scripts by running 
+2. Open properties for zip file and click "Unblock" button if you have one.
+3. Unzip 
+4. Open a PowerShell console
+5. Run `.\Install.ps1`. You may need to allow remote scripts by running 
 `Set-ExecutionPolicy -RemoteSigned`. You may also have to right-click `Install.ps1`
 and Unblock it from the properties window.
 
