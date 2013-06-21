@@ -10,9 +10,12 @@ namespace Jump.Location
         private static bool _hasRegisteredDirectoryHook;
         private static readonly CommandController Controller = CommandController.DefaultInstance;
 
-        public static IEnumerable<string> GetTabExpansion(string searchTerm)
+        public static IEnumerable<string> GetTabExpansion(string line, string lastWord)
         {
-            return Controller.GetMatchesForSearchTerm(searchTerm).Select(GetResultPath);
+            // line is something like "j term1 term2 temr3". 
+            // Skip cmdlet name and call match for the rest.
+            string[] searchTerms = line.Split().Skip(1).ToArray();
+            return Controller.GetMatchesForSearchTerm(searchTerms).Select(GetResultPath);
         }
 
         private static string GetResultPath(IRecord record)

@@ -97,22 +97,31 @@ namespace Jump.Location
 
         public IEnumerable<IRecord> GetMatchesForSearchTerm(params string[] searchTerms)
         {
-            ReloadIfNecessary();
-            var used = new HashSet<string>();
-
-            var matches = new List<IRecord>();
-            for (var i = 0; i < searchTerms.Length; i++)
+            List<string> normalizedSearchTerms = new List<string>();
+            foreach (var term in searchTerms)
             {
-                var isLast = i == searchTerms.Length - 1;
-                var newMatches = GetMatchesForSingleSearchTerm(searchTerms[i], used, isLast);
+                normalizedSearchTerms.AddRange(term.Split('\\'));
+            }
+            return GetMatchesForNormalizedSearchTerm(normalizedSearchTerms);
+        }
+
+        private IEnumerable<IRecord> GetMatchesForNormalizedSearchTerm(List<string> searchTerms)
+        {
+            ReloadIfNecessary();
+            var matches = new List<IRecord>();
+            for (var i = 0; i < searchTerms.Count(); i++)
+            {
+                var isLast = i == searchTerms.Count()-1;
+                var newMatches = GetMatchesForSingleSearchTerm(searchTerms[i], isLast);
                 matches = i == 0 ? newMatches.ToList() : matches.Intersect(newMatches).ToList();
             }
 
             return matches;
         }
 
-        private IEnumerable<IRecord> GetMatchesForSingleSearchTerm(string search, HashSet<string> used, bool isLast)
+        private IEnumerable<IRecord> GetMatchesForSingleSearchTerm(string search, bool isLast)
         {
+            var used = new HashSet<string>();
             search = search.ToLower();
             foreach (var record in GetOrderedRecords()
                     .Where(x => x.PathSegments.Last().StartsWith(search)))
