@@ -4,6 +4,8 @@ using System.Management.Automation;
 
 namespace Jump.Location
 {
+    using System.IO;
+
     [Cmdlet("Jump", "Location", DefaultParameterSetName = "Query")]
     public class JumpLocationCommand : PSCmdlet
     {
@@ -77,10 +79,11 @@ namespace Jump.Location
 
             if (Query == null) return;
 
-            // If it has a \ it's probably a full path, so just process it
-            if (Query.Length == 1 && Query.First().Contains('\\'))
+            // If last term is absolute path it's probably because of autocomplition
+            // so and we can safely process it here.
+            if (Path.IsPathRooted(Query.Last()))
             {
-                ChangeDirectory(Query.First());
+                ChangeDirectory(Query.Last());
                 return;
             }
 
