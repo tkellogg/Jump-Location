@@ -187,6 +187,71 @@ namespace Jump.Location.Specs
                 record.Path.ShouldEqual(@"C:\Users\tkellogg");
             }
 
+            [Fact]
+            public void Right_match_for_two_segments()
+            {
+                dbMock.Setup(x => x.Records).Returns(new[]
+                    {
+                        new Record(@"FS::C:\Users\foo", 10M), 
+                        new Record(@"FS::C:\Users\bar", 20M),
+                    });
+
+                var record = controller.FindBest("ers", "foo");
+                record.Path.ShouldEqual(@"C:\Users\foo");
+            }
+
+            [Fact]
+            public void Allow_column_in_search_terms()
+            {
+                dbMock.Setup(x => x.Records).Returns(new[]
+                    {
+                        new Record(@"FS::C:\Users\foo", 20M), 
+                        new Record(@"FS::C:\Users\tkellogg", 10M), 
+                    });
+
+                var record = controller.FindBest("c:", "tke");
+                record.Path.ShouldEqual(@"C:\Users\tkellogg");
+            }
+
+            [Fact]
+            public void Same_search_term_3_times_for_last_segment()
+            {
+                dbMock.Setup(x => x.Records).Returns(new[]
+                    {
+                        new Record(@"FS::C:\Users\foo", 10M), 
+                        new Record(@"FS::C:\Users\bar", 20M),
+                    });
+
+                var record = controller.FindBest("foo", "foo", "foo");
+                record.Path.ShouldEqual(@"C:\Users\foo");
+            }
+
+            [Fact]
+            public void Same_search_term_2_times_for_midle_segment()
+            {
+                dbMock.Setup(x => x.Records).Returns(new[]
+                    {
+                        new Record(@"FS::C:\Users\foo", 10M), 
+                        new Record(@"FS::C:\Users\bar", 20M),
+                    });
+
+                var record = controller.FindBest("Users", "Users", "oo");
+                record.Path.ShouldEqual(@"C:\Users\foo");
+            }
+
+            [Fact]
+            public void One_of_segments_is_full_path()
+            {
+                dbMock.Setup(x => x.Records).Returns(new[]
+                    {
+                        new Record(@"FS::C:\Users\foo", 10M), 
+                        new Record(@"FS::C:\Users\bar", 20M),
+                    });
+
+                var record = controller.FindBest("ers", @"C:\Users\foo");
+                record.Path.ShouldEqual(@"C:\Users\foo");
+            }
+            
             #endregion
 
             [Fact]
@@ -226,6 +291,7 @@ namespace Jump.Location.Specs
 
                 fsMock.VerifyAll();
             }
+            
         }
     }
 }
