@@ -73,7 +73,7 @@ most similar to "autojump".
 Installation
 ------------
 
-1. Download [the zip file][4]
+1. Download [latest release][5].
 2. Open properties for zip file and click "Unblock" button if you have one.
 3. Unzip 
 4. Open a PowerShell console
@@ -86,10 +86,13 @@ your habits. You'll also have access to the `j` and `jumpstat` aliases.
 
 If you find any bugs, please report them so I can fix them quickly!
 
+References
+----------
+1. [old releases][4].
 
  [1]: https://github.com/joelthelion/autojump
  [2]: http://stackoverflow.com/a/11813545/503826
  [3]: http://blogs.msdn.com/b/powershell/archive/2009/07/15/final-approved-verb-list-for-windows-powershell-2-0.aspx
  [4]: https://github.com/tkellogg/Jump-Location/downloads
-
+ [5]: https://sourceforge.net/projects/jumplocation/files/latest/download
 
