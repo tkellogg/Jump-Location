@@ -77,7 +77,7 @@ namespace Jump.Location
                 return;
             }
 
-            if (Query == null) return;
+            if (Query == null) { Query = new string[] { "" }; }
 
             // If last term is absolute path it's probably because of autocomplition
             // so and we can safely process it here.
