@@ -88,8 +88,10 @@ If you find any bugs, please report them so I can fix them quickly!
 Build from source
 -----------------
 From root directory:
+
 1. Run `msbuild` .
 2. Run `.\build.ps1`
+
 In directory `Build` you will have local build of module.
 
 References
