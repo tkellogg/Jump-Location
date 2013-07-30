@@ -97,7 +97,7 @@ namespace Jump.Location
         private void ChangeDirectory(string fullPath)
         {
             var verb = Push ? "Push" : "Set";
-            InvokeCommand.InvokeScript(string.Format("{1}-Location {0}", fullPath, verb));
+            InvokeCommand.InvokeScript(string.Format("{1}-Location \"{0}\"", fullPath, verb));
         }
     }
 }
