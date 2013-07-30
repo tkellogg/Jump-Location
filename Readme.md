@@ -72,7 +72,6 @@ most similar to "autojump".
 
 Installation
 ------------
-
 1. Download [latest release][5].
 2. Open properties for zip file and click "Unblock" button if you have one.
 3. Unzip 
@@ -85,6 +84,13 @@ Next time you open a PowerShell console Jump-Location will start learning
 your habits. You'll also have access to the `j` and `jumpstat` aliases.
 
 If you find any bugs, please report them so I can fix them quickly!
+
+Build from source
+-----------------
+From root directory:
+1. Run `msbuild` .
+2. Run `.\build.ps1`
+In directory `Build` you will have local build of module.
 
 References
 ----------
