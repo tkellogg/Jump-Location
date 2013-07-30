@@ -109,6 +109,11 @@ namespace Jump.Location
         {
             ReloadIfNecessary();
             var matches = new List<IRecord>();
+            // Hack to return everything on empty search query.
+            if (!searchTerms.Any())
+            {
+                searchTerms.Add("");
+            }
             for (var i = 0; i < searchTerms.Count(); i++)
             {
                 var isLast = i == searchTerms.Count()-1;

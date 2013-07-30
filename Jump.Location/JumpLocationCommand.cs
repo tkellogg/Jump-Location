@@ -77,11 +77,11 @@ namespace Jump.Location
                 return;
             }
 
-            if (Query == null) { Query = new string[] { "" }; }
+            if (Query == null) { Query = new string[] {}; }
 
             // If last term is absolute path it's probably because of autocomplition
             // so and we can safely process it here.
-            if (Path.IsPathRooted(Query.Last()))
+            if (Query.Any() && Path.IsPathRooted(Query.Last()))
             {
                 ChangeDirectory(Query.Last());
                 return;

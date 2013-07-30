@@ -291,6 +291,21 @@ namespace Jump.Location.Specs
 
                 fsMock.VerifyAll();
             }
+
+            [Fact]
+            public void Empty_query_return_most_popular()
+            {
+                dbMock.Setup(x => x.Records).Returns(new[]
+                    {
+                        new Record(@"FS::C:\Users\tkellogg", 10M), 
+                        new Record(@"FS::C:\Users\tkellogg2", 13M), 
+                        new Record(@"FS::C:\Users\tkellogg3", 15M), 
+                    });
+
+                var record = controller.GetMatchesForSearchTerm(new string[] {});
+                record.Select(x => x.Path).ToArray()
+                    .ShouldEqual(new[] { @"C:\Users\tkellogg3", @"C:\Users\tkellogg2", @"C:\Users\tkellogg" });
+            }
             
         }
     }
