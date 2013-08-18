@@ -5,7 +5,7 @@ if (Test-Path Function:\TabExpansion) {
 
 function global:TabExpansion($line, $lastWord) {
 	switch -regex ($line) {
-		"^(Jump-Location|j) .*" {
+		"^(Jump-Location|j|xj) .*" {
 			[Jump.Location.JumpLocationCommand]::GetTabExpansion($line, $lastWord)
 		}
 		default {
