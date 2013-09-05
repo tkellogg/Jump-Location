@@ -9,7 +9,6 @@ namespace Jump.Location
     [Cmdlet("Jump", "Location", DefaultParameterSetName = "Query")]
     public class JumpLocationCommand : PSCmdlet
     {
-        private static bool _hasRegisteredDirectoryHook;
         private static readonly CommandController Controller = CommandController.DefaultInstance;
 
         public static IEnumerable<string> GetTabExpansion(string line, string lastWord)
@@ -57,13 +56,9 @@ namespace Jump.Location
         {
             base.BeginProcessing();
 
-            if (_hasRegisteredDirectoryHook) return;
-
             InvokeCommand.InvokeScript(@"Set-PSBreakpoint -Variable pwd -Mode Write -Action {
                 [Jump.Location.JumpLocationCommand]::UpdateTime($($(Get-Item -Path $(Get-Location))).PSPath);
             }");
-
-            _hasRegisteredDirectoryHook = true;
         }
         
         protected override void ProcessRecord()
