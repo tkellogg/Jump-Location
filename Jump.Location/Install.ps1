@@ -3,7 +3,7 @@
 
 param(
 	[switch]$WhatIf = $false,
-	[string] $WhichProfile = $PROFILE.CurrentUserAllHosts
+	[string] $WhichProfile = $PROFILE.CurrentUserCurrentHost
 )
 
 if($PSVersionTable.PSVersion.Major -lt 2) {
@@ -34,7 +34,7 @@ function Get-FileEncoding($Path) {
     }
 }
 
-$profileLine = ". '$installDir\Load.ps1'"
+$profileLine = "Import-Module '$installDir\Jump.Location.psd1'"
 if(Select-String -Path $WhichProfile -Pattern $profileLine -Quiet -SimpleMatch) {
     Write-Host "It seems Jump-Location is already installed..."
     return
@@ -48,6 +48,6 @@ $profileLine
 
 "@ | Out-File $WhichProfile -Append -WhatIf:$WhatIf -Encoding (Get-FileEncoding $WhichProfile)
 
-Write-Host 'Find-String sucessfully installed!'
+Write-Host 'Jump-Location sucessfully installed!'
 Write-Host 'Please reload your profile for the changes to take effect:'
 Write-Host "    . $WhichProfile"
