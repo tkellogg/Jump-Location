@@ -26,10 +26,14 @@ namespace Jump.Location
     class FileStoreProvider : IFileStoreProvider
     {
         private readonly string path;
+        private readonly string pathTemp;
+
+        private const string TempPrefix = ".tmp";
 
         public FileStoreProvider(string path)
         {
             this.path = path;
+            this.pathTemp = path + TempPrefix;
         }
 
         public event FileStoreUpdated FileStoreUpdated;
@@ -44,7 +48,10 @@ namespace Jump.Location
         {
             var lines = database.Records.Select(record => 
                 string.Format("{1}\t{0}", record.FullName, record.Weight));
-            File.WriteAllLines(path, lines.ToArray());
+            // We can lose all history, if powershell will be closed during operation.
+            // NTFS guarantees atomic move operation http://stackoverflow.com/questions/774098/atomicity-of-file-move
+            File.WriteAllLines(pathTemp, lines.ToArray());
+            File.Move(pathTemp, path);
         }
 
         public IDatabase Revive()
