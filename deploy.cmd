@@ -1,0 +1,1 @@
+cp .\Build\* %USERPROFILE%\Documents\WindowsPowerShell\Modules\Jump-location
