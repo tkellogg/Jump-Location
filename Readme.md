@@ -78,7 +78,10 @@ Installation
 4. Open a PowerShell console
 5. Run `.\Install.ps1`. You may need to allow remote scripts by running 
 `Set-ExecutionPolicy -RemoteSigned`. You may also have to right-click `Install.ps1`
-and Unblock it from the properties window.
+and Unblock it from the properties window. 
+**Alternative:**
+Add line `Import-Module $modules\Jump-Location\Jump.Location.psd1` to your `$PROFILE`,
+where `$modules\Jump-Location` is a path to folder with module.
 
 Next time you open a PowerShell console Jump-Location will start learning 
 your habits. You'll also have access to the `j` and `jumpstat` aliases.
