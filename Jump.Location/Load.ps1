@@ -41,9 +41,6 @@ if (-Not (Get-Command Jump-Location -ErrorAction SilentlyContinue)) {
 
 	& $($fullpath + "\TabExpansion.ps1")
 
-	# Show information about loaded location database.
-	$recordsCount = (jumpstat | measure).Count
-	Write-Host -Fore Green "`n[Jump-location] Database contains $recordsCount records.`n"
 } else {
 	Write-Warning "Jump-Location already loaded"
 }
