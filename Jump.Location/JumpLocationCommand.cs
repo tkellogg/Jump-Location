@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation;
-
-namespace Jump.Location
+﻿namespace Jump.Location
 {
     using System.IO;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Management.Automation;
 
     [Cmdlet("Jump", "Location", DefaultParameterSetName = "Query")]
     public class JumpLocationCommand : PSCmdlet
@@ -26,16 +25,6 @@ namespace Jump.Location
                 return string.Format("\"{0}\"", candidate);
             return candidate;
         }
-
-        /*
-         * x1. Save manipulated jumpstat values
-         * x2. -Query switch for returning first string
-         * 3. Local search. `j . blah` will only match dirs under cwd. Using `.` will also search outside the DB.
-         * 4. -Purge (not terribly high priority)
-         * 5. Better PS documentation
-         * x6. jumpstat -First, for returning just the first
-         * x7. Negative Weight removes from the gene pool
-         */
 
         [Parameter(ParameterSetName = "Query", ValueFromRemainingArguments = true)]
         public string[] Query { get; set; }

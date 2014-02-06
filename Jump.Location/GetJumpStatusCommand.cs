@@ -4,6 +4,8 @@ using System.Management.Automation;
 
 namespace Jump.Location
 {
+    using System.IO;
+
     [Cmdlet("Get", "JumpStatus", DefaultParameterSetName = "Query")]
     public class GetJumpStatusCommand : PSCmdlet
     {
@@ -21,12 +23,40 @@ namespace Jump.Location
         [Parameter(ParameterSetName = "Query", HelpMessage = "Includes all results, even if the weight is negative.")]
         public SwitchParameter All { get; set; }
 
+        [Parameter(ParameterSetName = "Cleanup", HelpMessage = "Remove obsolete(not existing on the file system) records from DB.")]
+        public SwitchParameter Cleanup { get; set; }
+
         protected override void ProcessRecord()
         {
+            
+            if (Cleanup.IsPresent)
+            {
+                DoCleanup();
+                return;    
+            }
+
             if (All || Query == null || Query.Length == 0) 
                 ProcessSearch(Controller.GetOrderedRecords(All));
             else 
                 ProcessSearch(Controller.GetMatchesForSearchTerm(Query));
+        }
+
+        private const string FileSystemProvider = @"Microsoft.PowerShell.Core\FileSystem";
+        private void DoCleanup()
+        {
+            bool needsToSave = false;
+            foreach (IRecord record in Controller.GetOrderedRecords(true))
+            {
+                if (record.Provider == FileSystemProvider && !Directory.Exists(record.Path))
+                {
+                    Controller.RemoveRecord(record);
+                    needsToSave = true;
+                }
+            }
+            if (needsToSave)
+            {
+                Controller.Save();
+            }
         }
 
         private void ProcessSearch(IEnumerable<IRecord> records)

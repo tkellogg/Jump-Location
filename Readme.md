@@ -97,6 +97,11 @@ From root directory:
 
 In directory `Build` you will have local build of module.
 
+TODO
+----------
+1. Local search. `j . blah` will only match dirs under cwd. Using `.` will also search outside the DB.
+2. Better PS documentation
+
 References
 ----------
 1. [old releases][4].

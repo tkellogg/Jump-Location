@@ -8,6 +8,7 @@ namespace Jump.Location
         IEnumerable<IRecord> Records { get; }
         void Add(string fullPath);
         void Add(IRecord record);
+        bool Remove(IRecord record);
         IRecord GetByFullName(string fullName);
     }
 
@@ -25,6 +26,11 @@ namespace Jump.Location
         public void Add(IRecord record)
         {
             records.Add(record);
+        }
+
+        public bool Remove(IRecord record)
+        {
+            return records.Remove(record);
         }
 
         public IRecord GetByFullName(string fullName)

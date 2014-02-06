@@ -170,6 +170,11 @@ namespace Jump.Location
                    select record;
         }
 
+        public bool RemoveRecord(IRecord record)
+        {
+            return database.Remove(record);
+        }
+
         public void PrintStatus()
         {
             foreach (var record in GetOrderedRecords())
