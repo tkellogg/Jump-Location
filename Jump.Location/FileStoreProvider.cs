@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -47,7 +48,8 @@ namespace Jump.Location
         public void Save(IDatabase database)
         {
             var lines = database.Records.Select(record => 
-                string.Format("{1}\t{0}", record.FullName, record.Weight));
+                string.Format("{1}\t{0}", record.FullName, record.Weight.ToString(CultureInfo.InvariantCulture)));
+
             // We can lose all history, if powershell will be closed during operation.
             File.WriteAllLines(pathTemp, lines.ToArray());
             // NTFS guarantees atomic move operation http://stackoverflow.com/questions/774098/atomicity-of-file-move
@@ -65,7 +67,7 @@ namespace Jump.Location
                 if (columns == null || columns.Length != 2)
                     throw new InvalidOperationException("Row of file didn't have 2 columns separated by a tab");
 
-                var weight = decimal.Parse(columns[0]);
+                var weight = decimal.Parse(columns[0], CultureInfo.InvariantCulture);
                 var record = new Record(columns[1], weight);
                 db.Add(record);
             }
