@@ -72,6 +72,15 @@ most similar to "autojump".
 
 Installation
 ------------
+
+There is now a [Chocolatey package][6] for Jump-Location. To install via Chocolaty
+
+```
+C:\ choco install Jump-Location
+```
+
+Otherwise you can still install it manually.
+
 1. Download [latest release][5].
 2. Open properties for zip file and click "Unblock" button if you have one.
 3. Unzip 
@@ -111,4 +120,5 @@ References
  [3]: http://blogs.msdn.com/b/powershell/archive/2009/07/15/final-approved-verb-list-for-windows-powershell-2-0.aspx
  [4]: https://github.com/tkellogg/Jump-Location/downloads
  [5]: https://sourceforge.net/projects/jumplocation/files/latest/download
+ [6]: https://chocolatey.org/packages/Jump-Location
 
