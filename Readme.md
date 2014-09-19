@@ -73,6 +73,8 @@ most similar to "autojump".
 Installation
 ------------
 
+*Important:* Jump-Location requires PowerShell version 3 or higher. Older installations of Windows 7 may only have PowerShell version 2.
+
 There is now a [Chocolatey package][6] for Jump-Location. To install via Chocolaty
 
 ```
