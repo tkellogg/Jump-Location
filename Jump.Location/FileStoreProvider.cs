@@ -67,7 +67,8 @@ namespace Jump.Location
                 if (columns == null || columns.Length != 2)
                     throw new InvalidOperationException("Row of file didn't have 2 columns separated by a tab");
 
-                var weight = decimal.Parse(columns[0], CultureInfo.InvariantCulture);
+                var weight = 0M;
+                decimal.TryParse(columns[0], NumberStyles.Any, CultureInfo.InvariantCulture, out weight);
                 var record = new Record(columns[1], weight);
                 db.Add(record);
             }

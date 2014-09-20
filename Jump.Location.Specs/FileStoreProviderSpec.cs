@@ -55,6 +55,19 @@ namespace Jump.Location.Specs
             }
 
             [Fact]
+            public void It_can_Revive_a_record_with_invalid_weight()
+            {
+                var lines = new[] {"INVALID_WEIGHT\tFS::C:\\blah"};
+                File.WriteAllLines(path, lines);
+                var provider = new FileStoreProvider(path);
+
+                var db = provider.Revive();
+                db.Records.Count().ShouldEqual(1);
+                db.Records.First().Weight.ShouldEqual(0M);
+                db.Records.First().Path.ShouldEqual("C:\\blah");
+            }
+
+            [Fact]
             public void It_skips_blank_and_empty_lines()
             {
                 var lines = new[]
