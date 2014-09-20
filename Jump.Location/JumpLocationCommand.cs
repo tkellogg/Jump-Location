@@ -74,14 +74,13 @@
             var best = Controller.FindBest(Query);
             if (best == null) throw new LocationNotFoundException(Query.First());
 
-            var fullPath = GetResultPath(best);
-            ChangeDirectory(fullPath);
+            ChangeDirectory(best.Path);
         }
 
         private void ChangeDirectory(string fullPath)
         {
             var verb = Push ? "Push" : "Set";
-            InvokeCommand.InvokeScript(string.Format("{1}-Location \"{0}\"", fullPath, verb));
+            InvokeCommand.InvokeScript(string.Format("{1}-Location '{0}'", fullPath.Trim(), verb));
         }
     }
 }

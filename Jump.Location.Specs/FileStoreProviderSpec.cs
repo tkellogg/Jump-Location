@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using Should;
 using Xunit;
+using Xunit.Extensions;
 
 namespace Jump.Location.Specs
 {
@@ -49,6 +52,19 @@ namespace Jump.Location.Specs
 
                 var db = provider.Revive();
                 db.Records.Count().ShouldEqual(3);
+            }
+
+            [Fact]
+            public void It_can_Revive_a_record_with_invalid_weight()
+            {
+                var lines = new[] {"INVALID_WEIGHT\tFS::C:\\blah"};
+                File.WriteAllLines(path, lines);
+                var provider = new FileStoreProvider(path);
+
+                var db = provider.Revive();
+                db.Records.Count().ShouldEqual(1);
+                db.Records.First().Weight.ShouldEqual(0M);
+                db.Records.First().Path.ShouldEqual("C:\\blah");
             }
 
             [Fact]
@@ -103,6 +119,18 @@ namespace Jump.Location.Specs
 
                 var contents = File.ReadAllText(path);
                 contents.ShouldEqual("42\tFS::C:\\data\r\n");
+            }
+
+            [Fact]
+            public void It_can_save_a_single_record_with_weight_as_decimal_value()
+            {
+                var db = new Database();
+                db.Add(new Record("FS::C:\\data", 42.5M));
+                var provider = new FileStoreProvider(path);
+                provider.Save(db);
+
+                var contents = File.ReadAllText(path);
+                contents.ShouldEqual("42.5\tFS::C:\\data\r\n");
             }
         }
     }
