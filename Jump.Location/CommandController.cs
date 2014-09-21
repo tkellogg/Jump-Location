@@ -31,8 +31,7 @@ namespace Jump.Location
                 if (defaultInstance == null)
                 {
                     var home = Environment.GetEnvironmentVariable("USERPROFILE");
-                    // TODO: I think there's potential here for a bug
-                    home = home ?? @"C:\";
+                    home = home ?? Path.Combine(Environment.GetEnvironmentVariable("HOMEDRIVE"), Environment.GetEnvironmentVariable("HOMEPATH"));
                     var dbLocation = Path.Combine(home, "jump-location.txt");
                     defaultInstance = Create(dbLocation);
                 }
@@ -56,6 +55,11 @@ namespace Jump.Location
             waitPeriod = new DirectoryWaitPeriod(record, DateTime.Now);
             Save();
         }
+
+        public void AddRecord(IRecord record)
+        {
+            database.Add(record);
+       }
 
         public void Save()
         {
