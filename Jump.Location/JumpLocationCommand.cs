@@ -1,10 +1,13 @@
-﻿namespace Jump.Location
-{
-    using System.IO;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Management.Automation;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Management.Automation;
 
+namespace Jump.Location
+{
     [Cmdlet("Jump", "Location", DefaultParameterSetName = "Query")]
     public class JumpLocationCommand : PSCmdlet
     {
@@ -36,22 +39,59 @@
         [Parameter(ParameterSetName = "Query", HelpMessage = "Use pushd instead of cd to change directory. Same as `pushj`")]
         public SwitchParameter Push { get; set; }
 
+        private const string UpdateCommandString = @"[Jump.Location.JumpLocationCommand]::UpdateTime($($(Get-Item -Path $(Get-Location))).PSPath)";
+
         public static void UpdateTime(string location)
         {
             Controller.UpdateLocation(location);
         }
 
-        protected override void BeginProcessing()
+        private void InjectUpdateTime()
         {
-            base.BeginProcessing();
-
-            InvokeCommand.InvokeScript(@"Set-PSBreakpoint -Variable pwd -Mode Write -Action {
-                [Jump.Location.JumpLocationCommand]::UpdateTime($($(Get-Item -Path $(Get-Location))).PSPath);
-            }");
+            // we call powershell script, which use reflection on prompt function to add new line to the beggining of it.
+            InvokeCommand.InvokeScript(
+                @"[System.Management.Automation.FunctionInfo].GetField(
+                        ""_scriptBlock"", 
+                        [System.Reflection.BindingFlags]::Instance -bxor [System.Reflection.BindingFlags]::NonPublic
+                    ).SetValue(
+                            (Get-Item function:prompt), 
+                            [scriptblock]::Create(
+                                '" + UpdateCommandString + @"' + 
+                                ""`n"" + ( (Get-Item function:prompt).ScriptBlock.ToString() )
+                            ) 
+                      )"
+                );
         }
-        
+
+        private bool IsUpdateTimeInjected()
+        {
+            Collection<PSObject> lines = InvokeCommand.InvokeScript(@"
+                (Get-Item function:prompt).ScriptBlock.ToString().Split(""`n"")
+            ");
+            foreach (var line in lines)
+            {
+                string lineStr = line.BaseObject as string;
+                if (lineStr != null)
+                {
+                    if (String.Compare(UpdateCommandString, lineStr.Trim(), true, CultureInfo.InvariantCulture) == 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         protected override void ProcessRecord()
         {
+            // We use $function:prompt to register event.
+            // User can override the prompt during session.
+            // So we check registration and subscribe to events every time cmdlet is called.
+            if (!IsUpdateTimeInjected())
+            {
+                InjectUpdateTime();
+            }
+ 
             // This lets us do just `Jump-Location` to initialize everything in the profile script
             if (Initialize)
             {
