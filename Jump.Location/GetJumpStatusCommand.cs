@@ -6,7 +6,6 @@ namespace Jump.Location
 {
     using System;
     using System.IO;
-    using System.Text.RegularExpressions;
 
     [Cmdlet("Get", "JumpStatus", DefaultParameterSetName = "Query")]
     public class GetJumpStatusCommand : PSCmdlet
@@ -75,25 +74,26 @@ namespace Jump.Location
         {
             var home = Environment.GetEnvironmentVariable("USERPROFILE");
             home = home ?? Path.Combine(Environment.GetEnvironmentVariable("HOMEDRIVE"), Environment.GetEnvironmentVariable("HOMEPATH"));
-
             var dirs = new Dictionary<string, int>();
+
+            // Discover subfolders and ancestors
             Console.WriteLine("Discovering new folders.");
-            var currentDirectories = new Dictionary<string, int>();
+            var currentDirs = new Dictionary<string, int>();
             foreach (IRecord record in Controller.GetOrderedRecords(true))
             {
                 if (record.Provider == FileSystemProvider && Directory.Exists(record.Path))
                 {
-                    if (record.Path == home) continue; // Skip home folder
-                    currentDirectories.Add(record.Path, 1);
+                    if (record.Path == home) continue; // Skip home folder - it's going to be in the list by default, and subfolders such as photos, music, etc. are probably not useful.
+                    currentDirs.Add(record.Path, 1);
                     GetChildFolders(record.Path, dirs);
                 }
             }
 
             int numDirsAdded = 0;
-            Console.WriteLine("==> Adding directories:");
+            Console.WriteLine("Adding directories:");
             foreach (string dir in dirs.Keys)
             {
-                if (!currentDirectories.ContainsKey(dir))
+                if (!currentDirs.ContainsKey(dir))
                 {
                     Console.WriteLine(dir);
                     IRecord record = new Record(FileSystemProvider + "::" + dir, 0);
@@ -101,6 +101,7 @@ namespace Jump.Location
                     numDirsAdded++;
                 }
             }
+
             Controller.Save();
 
             Console.WriteLine(string.Format("Number of directories added: {0}.", numDirsAdded));
