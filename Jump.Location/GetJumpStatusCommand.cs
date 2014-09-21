@@ -7,7 +7,6 @@ namespace Jump.Location
     using System;
     using System.Configuration;
     using System.IO;
-    using System.Reflection;
 
     [Cmdlet("Get", "JumpStatus", DefaultParameterSetName = "Query")]
     public class GetJumpStatusCommand : PSCmdlet
