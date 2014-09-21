@@ -5,6 +5,7 @@ using System.Management.Automation;
 namespace Jump.Location
 {
     using System;
+    using System.Configuration;
     using System.IO;
 
     [Cmdlet("Get", "JumpStatus", DefaultParameterSetName = "Query")]
@@ -75,8 +76,7 @@ namespace Jump.Location
             var home = Environment.GetEnvironmentVariable("USERPROFILE");
             home = home ?? Path.Combine(Environment.GetEnvironmentVariable("HOMEDRIVE"), Environment.GetEnvironmentVariable("HOMEPATH"));
             var dirs = new Dictionary<string, int>();
-
-            // Discover subfolders and ancestors
+            
             Console.WriteLine("Discovering new folders.");
             var currentDirs = new Dictionary<string, int>();
             foreach (IRecord record in Controller.GetOrderedRecords(true))
@@ -114,7 +114,9 @@ namespace Jump.Location
             {
                 string[] subDirs = Directory.GetDirectories(dir);
 
-                if (subDirs.Length <= 50) // Skip scanning very large directories... probably not useful // TODO read 50 from config
+                int maxSubFolders = int.Parse(ConfigurationManager.AppSettings["Jump.Location.Scan.MaxSubFolders"] ?? "50");
+                // Skip scanning directories with more than maxSubFolders... probably not useful and also very large folders can slow scanning/queries down considerably.
+                if (subDirs.Length <= maxSubFolders)
                 {
                     foreach (string subDir in Directory.GetDirectories(dir))
                     {
