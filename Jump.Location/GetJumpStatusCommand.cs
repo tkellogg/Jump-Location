@@ -7,6 +7,7 @@ namespace Jump.Location
     using System;
     using System.Configuration;
     using System.IO;
+    using System.Reflection;
 
     [Cmdlet("Get", "JumpStatus", DefaultParameterSetName = "Query")]
     public class GetJumpStatusCommand : PSCmdlet
@@ -109,7 +110,6 @@ namespace Jump.Location
 
         private void GetChildFolders(string dir, Dictionary<string, int> folders)
         {
-            var ret = new List<string>();
             try
             {
                 string[] subDirs = Directory.GetDirectories(dir);
@@ -118,7 +118,7 @@ namespace Jump.Location
                 // Skip scanning directories with more than maxSubFolders... probably not useful and also very large folders can slow scanning/queries down considerably.
                 if (subDirs.Length <= maxSubFolders)
                 {
-                    foreach (string subDir in Directory.GetDirectories(dir))
+                    foreach (string subDir in subDirs)
                     {
                         Console.WriteLine(subDir);
                         if (!folders.ContainsKey(subDir))
@@ -130,7 +130,7 @@ namespace Jump.Location
                 }
                 else
                 {
-                    Console.WriteLine("Skipped folder " + dir + ". Too many subdirs.");
+                    Console.WriteLine(string.Format("Skipped folder {0}. More than {1} subdirs.", dir, maxSubFolders));
                 }
             }
             catch (System.Exception excpt)

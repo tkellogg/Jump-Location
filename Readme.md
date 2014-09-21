@@ -58,6 +58,13 @@ Setting a weight to a negative number like that will cause it to be blacklisted
 from all jump results. Use the `jumpstat -All` option to see negative weights
 included in the jumpstat result set.
 
+Jumpstat can also be used with the "scan" parameter (jumpstat -scan) to recursively
+scan known directories and add their sub-directories into the database. This is a
+quick way to teach Jump-Location about related directories without having to manually
+cd'ing to each one individually. To keep the database size down to a reasonable
+level, any directory with more than 50 child directories are ignored during
+scanning. This is controlled by config key Jump.Location.Scan.MaxSubFolders in
+Jump.Location.dll.config.
 
 Why `Jump-Location`?
 --------------------
