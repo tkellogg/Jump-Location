@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 
 namespace Jump.Location
@@ -18,6 +20,11 @@ namespace Jump.Location
 
         internal CommandController(IDatabase database, IFileStoreProvider fileStore)
         {
+            // This is so that we can read config settings from DLL config file
+            string configFile = Assembly.GetExecutingAssembly().Location + ".config";
+            AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", configFile);
+            ConfigurationManager.RefreshSection("appSettings");
+
             this.database = database;
             this.fileStore = fileStore;
             var thread = new Thread(SaveLoop);
