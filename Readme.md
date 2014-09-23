@@ -104,6 +104,11 @@ where `$modules\Jump-Location` is a path to folder with module.
 Next time you open a PowerShell console Jump-Location will start learning 
 your habits. You'll also have access to the `j` and `jumpstat` aliases.
 
+If you get errors after installation, try unblocking the file Jump.Location.dll manually by
+one of the following methods to clear the "untrusted" flag:
+1. Copy the file to a FAT32 file system (such as a memory card) and back.
+2. Run cmd /c "echo.>Jump.Location.dll:Zone.Identifier"
+
 If you find any bugs, please report them so I can fix them quickly!
 
 Build from source
