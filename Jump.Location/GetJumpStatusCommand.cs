@@ -8,7 +8,7 @@ namespace Jump.Location
     using System.Configuration;
     using System.IO;
 
-    [Cmdlet("Get", "JumpStatus", DefaultParameterSetName = "Query")]
+    [Cmdlet(VerbsCommon.Get, "JumpStatus", DefaultParameterSetName = "Query")]
     public class GetJumpStatusCommand : PSCmdlet
     {
         private static readonly CommandController Controller = CommandController.DefaultInstance;

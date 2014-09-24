@@ -4,13 +4,13 @@ Jump-Location: A cd that learns
 If you spend any time in a console you know that `cd` is by far the most
 common command that you issue. I'll open up a console to it's default location
 in `C:\Users\tkellogg` or `C:\Windows\system32` and then issue a `cd C:\work\MyProject`. 
-`Jump-Location` is a cmdlet lets you issue a `j my` to jump 
+`Set-JumpLocation` is a cmdlet lets you issue a `j my` to jump 
 directly to `C:\work\MyProject`. 
 
 It learns your behavior by keeping track of how long you spend in certain
 directories and favoring them over the ones you don't care about.  You don't 
 have to use `Jump-Location` as a replacement for `cd`. Use `cd`	to go local, and 
-use `Jump-Location` to jump further away.
+use `Set-JumpLocation` to jump further away.
 
 `Jump-Location` is a powershell implementation of [autojump][1].
 
@@ -19,7 +19,7 @@ How it knows where you want to go
 ---------------------------------
 
 It keeps track of [how long you stay in a directory][2] and builds a database.
-When you use the `Jump-Location` or `j` command, it looks through the database
+When you use the `Set-JumpLocation` or `j` command, it looks through the database
 to find the most likely directory and jumps there. You should only need to
 give it a 2-3 character hint. For instance, on mine I can do:
 
@@ -65,16 +65,6 @@ without having to manually cd'ing to each one individually. To keep the database
 size down to a reasonable level, any directory with more than 50 child directories
 are ignored during scanning. This can be changed by editing the config key
 Jump.Location.Scan.MaxSubFolders in Jump.Location.dll.config.
-
-Why `Jump-Location`?
---------------------
-
-In PowerShell, cmdlet names must have a `<Verb>-<Noun>` format. You can
-alias them (like I did with the `j` command).
-PowerShell also has [a list of approved verbs][3]. 
-`Jump` is not on that list, but I chose it anyway because it's most 
-descriptive of what you're actually trying to do to `Location`. It's also
-most similar to "autojump".
 
 
 Installation
