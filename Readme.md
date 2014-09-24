@@ -123,4 +123,3 @@ References
  [4]: https://github.com/tkellogg/Jump-Location/downloads
  [5]: https://sourceforge.net/projects/jumplocation/files/latest/download
  [6]: https://chocolatey.org/packages/Jump-Location
- [7]: http://social.technet.microsoft.com/wiki/contents/articles/21016.how-to-install-windows-powershell-4-0.aspx
