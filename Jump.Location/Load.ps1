@@ -12,7 +12,10 @@ $dllpath = $fullpath + "\Jump.Location.dll"
 if (-Not (Get-Command Jump-Location -ErrorAction SilentlyContinue)) {
 
 	Import-Module $dllpath -Global -DisableNameChecking
-	New-Alias -Name j -Value Jump-Location -Scope Global
+	New-Alias -Name j -Value Set-JumpLocation -Scope Global
+	
+	# this alias is for backward compatability
+	New-Alias -Name Jump-Location -Value Set-JumpLocation -Scope Global
 
 	New-Alias -Name jumpstat -Value Get-JumpStatus -Scope Global
 
@@ -20,7 +23,7 @@ if (-Not (Get-Command Jump-Location -ErrorAction SilentlyContinue)) {
 		Param (
 			[Parameter(ValueFromRemainingArguments=$true)] $args
 		)
-		Jump-Location @args -Push
+		Set-JumpLocation @args -Push
 	}
 
 	function global:getj {
@@ -37,7 +40,7 @@ if (-Not (Get-Command Jump-Location -ErrorAction SilentlyContinue)) {
 		explorer $(jumpstat -First @args)
 	}
 
-	Jump-Location -Initialize
+	Set-JumpLocation -Initialize
 
 	& $($fullpath + "\TabExpansion.ps1")
 
