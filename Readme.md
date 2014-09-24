@@ -70,8 +70,6 @@ Jump.Location.Scan.MaxSubFolders in Jump.Location.dll.config.
 Installation
 ------------
 
-*Important:* Jump-Location requires PowerShell version 3 or higher. Older installations of Windows 7 may only have PowerShell version 2. [How to update powershell][7]. 
-
 There is now a [Chocolatey package][6] for Jump-Location. To install via Chocolaty
 
 ```
