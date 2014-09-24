@@ -6,8 +6,8 @@ param(
 	[string] $WhichProfile = $PROFILE.CurrentUserCurrentHost
 )
 
-if($PSVersionTable.PSVersion.Major -lt 2) {
-    Write-Warning "Find-String requires PowerShell 2.0 or better; you have version $($Host.Version)."
+if($PSVersionTable.PSVersion.Major -lt 3) {
+    Write-Warning "Jump-Location requires PowerShell 3.0 or better; you have version $($Host.Version)."
     return
 }
 
