@@ -20,5 +20,5 @@ cp $source\Jump.Location.psd1 $destination
 cp $source\Jump.Location.Format.ps1xml $destination
 cp $source\Types.ps1xml $destination
 cp $source\Install.ps1 $destination
-cp $source\Load.ps1 $destination
+cp $source\Load.psm1 $destination
 cp $source\TabExpansion.ps1 $destination
