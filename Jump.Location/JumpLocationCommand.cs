@@ -1,10 +1,13 @@
-﻿namespace Jump.Location
-{
-    using System.IO;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Management.Automation;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Management.Automation;
 
+namespace Jump.Location
+{
     [Cmdlet("Jump", "Location", DefaultParameterSetName = "Query")]
     public class JumpLocationCommand : PSCmdlet
     {
@@ -41,22 +44,15 @@
             Controller.UpdateLocation(location);
         }
 
-        protected override void BeginProcessing()
-        {
-            base.BeginProcessing();
-
-            InvokeCommand.InvokeScript(@"Set-PSBreakpoint -Variable pwd -Mode Write -Action {
-                [Jump.Location.JumpLocationCommand]::UpdateTime($($(Get-Item -Path $(Get-Location))).PSPath);
-            }");
-        }
-        
         protected override void ProcessRecord()
         {
-            // This lets us do just `Jump-Location` to initialize everything in the profile script
+            // This lets us do just `Jump-Location -Initialize` to initialize everything in the profile script
             if (Initialize)
             {
                 InvokeCommand.InvokeScript(@"
-                    [Jump.Location.JumpLocationCommand]::UpdateTime($($(Get-Item -Path $(Get-Location))).PSPath);
+                    Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -Action {
+                        [Jump.Location.JumpLocationCommand]::UpdateTime($($(Get-Item -Path $(Get-Location))).PSPath)
+                    }
                 ");
                 return;
             }
