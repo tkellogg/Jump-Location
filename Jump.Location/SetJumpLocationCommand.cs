@@ -8,8 +8,8 @@ using System.Management.Automation;
 
 namespace Jump.Location
 {
-    [Cmdlet("Jump", "Location", DefaultParameterSetName = "Query")]
-    public class JumpLocationCommand : PSCmdlet
+    [Cmdlet(VerbsCommon.Set, "JumpLocation", DefaultParameterSetName = "Query")]
+    public class SetJumpLocationCommand : PSCmdlet
     {
         private static readonly CommandController Controller = CommandController.DefaultInstance;
 
@@ -51,7 +51,7 @@ namespace Jump.Location
             {
                 InvokeCommand.InvokeScript(@"
                     Register-EngineEvent -SourceIdentifier PowerShell.OnIdle -Action {
-                        [Jump.Location.JumpLocationCommand]::UpdateTime($($(Get-Item -Path $(Get-Location))).PSPath)
+                        [Jump.Location.SetJumpLocationCommand]::UpdateTime($($(Get-Item -Path $(Get-Location))).PSPath)
                     }
                 ");
                 return;
