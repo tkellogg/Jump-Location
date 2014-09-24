@@ -64,7 +64,7 @@
     <Compile Include="DirectoryWaitPeriod.cs" />
     <Compile Include="FileStoreProvider.cs" />
     <Compile Include="GetJumpStatusCommand.cs" />
-    <Compile Include="JumpLocationCommand.cs" />
+    <Compile Include="SetJumpLocationCommand.cs" />
     <Compile Include="JumpLocationSnapIn.cs">
       <SubType>Component</SubType>
     </Compile>
