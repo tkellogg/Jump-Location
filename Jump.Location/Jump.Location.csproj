@@ -83,7 +83,7 @@
     <None Include="Jump.Location.psd1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Load.ps1">
+    <None Include="Load.psm1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="TabExpansion.ps1">
