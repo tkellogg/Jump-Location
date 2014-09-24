@@ -39,8 +39,6 @@ namespace Jump.Location
         [Parameter(ParameterSetName = "Query", HelpMessage = "Use pushd instead of cd to change directory. Same as `pushj`")]
         public SwitchParameter Push { get; set; }
 
-        private const string UpdateCommandString = @"[Jump.Location.JumpLocationCommand]::UpdateTime($($(Get-Item -Path $(Get-Location))).PSPath)";
-
         public static void UpdateTime(string location)
         {
             Controller.UpdateLocation(location);

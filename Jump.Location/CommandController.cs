@@ -52,7 +52,7 @@ namespace Jump.Location
             if (waitPeriod != null)
                 waitPeriod.CloseAndUpdate();
 
-            IRecord record = database.GetByFullName(fullName);
+            var record = database.GetByFullName(fullName);
             waitPeriod = new DirectoryWaitPeriod(record, DateTime.Now);
             Save();
         }
