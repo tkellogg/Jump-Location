@@ -106,7 +106,7 @@ Build from source
 From root directory:
 
 1. Run `msbuild` .
-2. Run `.\build.ps1`
+2. Run `.\copyBuild.ps1`
 
 In directory `Build` you will have local build of module.
 
