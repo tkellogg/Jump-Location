@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <metadata>
         <id>Jump-Location</id>
-        <version>0.5.1</version>
+        <version>0.6.0</version>
         <authors>tkellogg</authors>
         <owners>LCHarold</owners>
         <licenseUrl>https://github.com/tkellogg/Jump-Location/blob/master/License.md</licenseUrl>
