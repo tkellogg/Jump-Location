@@ -185,13 +185,5 @@ namespace Jump.Location
         {
             return database.Remove(record);
         }
-
-        public void PrintStatus()
-        {
-            foreach (var record in GetOrderedRecords())
-            {
-                Console.WriteLine("{0:   0.00}  {1}", record.Weight, record.Path);
-            }
-        }
     }
 }
