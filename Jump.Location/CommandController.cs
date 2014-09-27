@@ -15,6 +15,8 @@ namespace Jump.Location
         private IDatabase database;
         private readonly IFileStoreProvider fileStore;
         private bool needsToSave;
+        // pin timer to prevent GC
+        private Timer saveTimer;
         
         // In powershell_ise different tabs are represent different runspaces in the same process.
         // The prepor implementation requires ConditionalWeakTable from .NET 4.5
@@ -34,8 +36,9 @@ namespace Jump.Location
 
             this.database = database;
             this.fileStore = fileStore;
-            var thread = new Thread(SaveLoop);
-            thread.Start();
+            // We don't want write data to disk very often.
+            // It's fine to lose jump data for last 2 seconds.
+            saveTimer = new Timer(SaveCallback, null, 0, 2 * 1000);
         }
 
         public static CommandController DefaultInstance
@@ -82,24 +85,20 @@ namespace Jump.Location
             needsToSave = true;
         }
 
-        private void SaveLoop()
+        private void SaveCallback(object sender)
         {
-            while(true)
+            if (needsToSave)
             {
-                if (needsToSave)
+                try
                 {
-                    try
-                    {
-                        needsToSave = false;
-                        fileStore.Save(database);
-                        lastSaveDate = DateTime.Now;
-                    }
-                    catch(Exception e)
-                    {
-                        EventLog.WriteEntry("Application", string.Format("{0}\r\n{1}", e, e.StackTrace));
-                    }
+                    needsToSave = false;
+                    fileStore.Save(database);
+                    lastSaveDate = DateTime.Now;
                 }
-                else Thread.Sleep(10);
+                catch (Exception e)
+                {
+                    EventLog.WriteEntry("Application", string.Format("{0}\r\n{1}", e, e.StackTrace));
+                }
             }
         }
 
