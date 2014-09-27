@@ -67,7 +67,7 @@ namespace Jump.Location
             if (recordsRemoved > 0)
             {
                 Controller.Save();
-                Console.WriteLine("Number of records cleaned: " + recordsRemoved + ".");
+                WriteVerbose("Number of records cleaned: " + recordsRemoved + ".");
             }
         }
 
@@ -76,8 +76,8 @@ namespace Jump.Location
             var home = Environment.GetEnvironmentVariable("USERPROFILE");
             home = home ?? Path.Combine(Environment.GetEnvironmentVariable("HOMEDRIVE"), Environment.GetEnvironmentVariable("HOMEPATH"));
             var dirs = new Dictionary<string, int>();
-            
-            Console.WriteLine("Discovering new folders.");
+
+            WriteVerbose("Discovering new folders.");
             var currentDirs = new Dictionary<string, int>();
             foreach (IRecord record in Controller.GetOrderedRecords(true))
             {
@@ -90,12 +90,12 @@ namespace Jump.Location
             }
 
             int numDirsAdded = 0;
-            Console.WriteLine("Adding directories:");
+            WriteVerbose("Adding directories:");
             foreach (string dir in dirs.Keys)
             {
                 if (!currentDirs.ContainsKey(dir))
                 {
-                    Console.WriteLine(dir);
+                    WriteVerbose(dir);
                     IRecord record = new Record(FileSystemProvider + "::" + dir, 0);
                     Controller.AddRecord(record);
                     numDirsAdded++;
@@ -104,37 +104,30 @@ namespace Jump.Location
 
             Controller.Save();
 
-            Console.WriteLine(string.Format("Number of directories added: {0}.", numDirsAdded));
+            WriteVerbose(string.Format("Number of directories added: {0}.", numDirsAdded));
         }
 
         private void GetChildFolders(string dir, Dictionary<string, int> folders)
         {
-            try
-            {
-                string[] subDirs = Directory.GetDirectories(dir);
+            string[] subDirs = Directory.GetDirectories(dir);
 
-                int maxSubFolders = int.Parse(ConfigurationManager.AppSettings["Jump.Location.Scan.MaxSubFolders"] ?? "50");
-                // Skip scanning directories with more than maxSubFolders... probably not useful and also very large folders can slow scanning/queries down considerably.
-                if (subDirs.Length <= maxSubFolders)
+            int maxSubFolders = int.Parse(ConfigurationManager.AppSettings["Jump.Location.Scan.MaxSubFolders"] ?? "50");
+            // Skip scanning directories with more than maxSubFolders... probably not useful and also very large folders can slow scanning/queries down considerably.
+            if (subDirs.Length <= maxSubFolders)
+            {
+                foreach (string subDir in subDirs)
                 {
-                    foreach (string subDir in subDirs)
+                    WriteVerbose(subDir);
+                    if (!folders.ContainsKey(subDir))
                     {
-                        Console.WriteLine(subDir);
-                        if (!folders.ContainsKey(subDir))
-                        {
-                            folders.Add(subDir, 1);
-                            GetChildFolders(subDir, folders);
-                        }
+                        folders.Add(subDir, 1);
+                        GetChildFolders(subDir, folders);
                     }
                 }
-                else
-                {
-                    Console.WriteLine(string.Format("Skipped folder {0}. More than {1} subdirs.", dir, maxSubFolders));
-                }
             }
-            catch (System.Exception excpt)
+            else
             {
-                Console.WriteLine(excpt.Message);
+                WriteWarning(string.Format("Skipped folder {0}. More than {1} subdirs.", dir, maxSubFolders));
             }
         }
 
@@ -157,7 +150,7 @@ namespace Jump.Location
             foreach (var record in records)
                 WriteObject(record);
 
-            Console.WriteLine("Number of records: " + records.Count() + ".");
+            WriteVerbose("Number of records: " + records.Count() + ".");
         }
     }
 }
