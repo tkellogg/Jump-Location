@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading;
 
@@ -14,12 +15,18 @@ namespace Jump.Location
         private IDatabase database;
         private readonly IFileStoreProvider fileStore;
         private bool needsToSave;
-        private DirectoryWaitPeriod waitPeriod;
+        
+        // In powershell_ise different tabs are represent different runspaces in the same process.
+        // The prepor implementation requires ConditionalWeakTable from .NET 4.5
+        private Dictionary<Runspace, DirectoryWaitPeriod> _waitPeriodDictionary;
+
         private DateTime lastSaveDate = DateTime.Now;
         private static CommandController defaultInstance;
 
         internal CommandController(IDatabase database, IFileStoreProvider fileStore)
         {
+            _waitPeriodDictionary = new Dictionary<Runspace, DirectoryWaitPeriod>();
+
             // This is so that we can read config settings from DLL config file
             string configFile = Assembly.GetExecutingAssembly().Location + ".config";
             AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", configFile);
@@ -55,11 +62,13 @@ namespace Jump.Location
 
         public void UpdateLocation(string fullName)
         {
-            if (waitPeriod != null)
-                waitPeriod.CloseAndUpdate();
+            if (_waitPeriodDictionary.ContainsKey(Runspace.DefaultRunspace))
+            {
+                _waitPeriodDictionary[Runspace.DefaultRunspace].CloseAndUpdate();
+            }
 
             var record = database.GetByFullName(fullName);
-            waitPeriod = new DirectoryWaitPeriod(record, DateTime.Now);
+            _waitPeriodDictionary[Runspace.DefaultRunspace] = new DirectoryWaitPeriod(record, DateTime.Now);
             Save();
         }
 
