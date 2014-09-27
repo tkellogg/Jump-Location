@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 
 namespace Jump.Location
 {
@@ -26,15 +27,16 @@ namespace Jump.Location
 
     class FileStoreProvider : IFileStoreProvider
     {
-        private readonly string path;
-        private readonly string pathTemp;
+        private readonly string _path;
+        private readonly string _pathTemp;
+        private readonly Mutex _mutex;
 
         private const string TempPrefix = ".tmp";
 
         public FileStoreProvider(string path)
         {
-            this.path = path;
-            this.pathTemp = path + TempPrefix;
+            this._path = path;
+            this._pathTemp = path + TempPrefix;
         }
 
         public event FileStoreUpdated FileStoreUpdated;
@@ -47,20 +49,23 @@ namespace Jump.Location
 
         public void Save(IDatabase database)
         {
-            var lines = database.Records.Select(record => 
-                string.Format("{1}\t{0}", record.FullName, record.Weight.ToString(CultureInfo.InvariantCulture)));
+            using (_mutex)
+            {
+                var lines = database.Records.Select(record =>
+                    string.Format("{1}\t{0}", record.FullName, record.Weight.ToString(CultureInfo.InvariantCulture)));
 
-            // We can lose all history, if powershell will be closed during operation.
-            File.WriteAllLines(pathTemp, lines.ToArray());
-            // NTFS guarantees atomic move operation http://stackoverflow.com/questions/774098/atomicity-of-file-move
-            // So File.Move gurantees atomic, but doesn't support overwrite
-            File.Copy(pathTemp, path, true);
+                // We can lose all history, if powershell will be closed during operation.
+                File.WriteAllLines(_pathTemp, lines.ToArray());
+                // NTFS guarantees atomic move operation http://stackoverflow.com/questions/774098/atomicity-of-file-move
+                // So File.Move gurantees atomic, but doesn't support overwrite
+                File.Copy(_pathTemp, _path, true);
+            }
         }
 
         public IDatabase Revive()
         {
             var db = new Database();
-            var allLines = File.ReadAllLines(path);
+            var allLines = File.ReadAllLines(_path);
             var nonBlankLines = allLines.Where(line => !string.IsNullOrEmpty(line) && line.Trim() != string.Empty);
             foreach (var columns in nonBlankLines.Select(line => line.Split('\t')))
             {
@@ -75,6 +80,6 @@ namespace Jump.Location
             return db;
         }
 
-        public DateTime LastChangedDate { get { return File.GetLastWriteTime(path); } }
+        public DateTime LastChangedDate { get { return File.GetLastWriteTime(_path); } }
     }
 }
