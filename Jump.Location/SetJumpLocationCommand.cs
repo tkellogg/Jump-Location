@@ -60,15 +60,20 @@ namespace Jump.Location
             if (Query == null) { Query = new string[] {}; }
 
             // If last term is absolute path it's probably because of autocomplition
-            // so and we can safely process it here.
+            // we can safely process it here.
             if (Query.Any() && Path.IsPathRooted(Query.Last()))
             {
+                if (!Directory.Exists(Query.Last()))
+                {
+                    throw new LocationNotFoundException(Query.Last());
+                }
                 ChangeDirectory(Query.Last());
                 return;
             }
 
             IEnumerable<IRecord> orderedMatches = Controller.GetMatchesForSearchTerm(Query);
             if (orderedMatches == null) throw new LocationNotFoundException(String.Join(" ", Query));
+            bool destinationFound = false;
             foreach (IRecord match in orderedMatches)
             {
                 if (match.Provider == @"Microsoft.PowerShell.Core\FileSystem" && !Directory.Exists(match.Path))
@@ -77,7 +82,12 @@ namespace Jump.Location
                     continue;
                 }
                 ChangeDirectory(match.Path);
+                destinationFound = true;
                 break;
+            }
+            if (!destinationFound)
+            {
+                throw new LocationNotFoundException(String.Join(" ", Query));
             }
         }
 
