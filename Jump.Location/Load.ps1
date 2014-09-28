@@ -42,7 +42,7 @@ if (-Not (Get-Command Jump-Location -ErrorAction SilentlyContinue)) {
 
 	Set-JumpLocation -Initialize
 
-	& $($fullpath + "\TabExpansion.ps1")
+	. $($fullpath + "\TabExpansion.ps1")
 
 } else {
 	Write-Warning "Jump-Location already loaded"
