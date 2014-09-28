@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Threading;
 
@@ -14,12 +15,20 @@ namespace Jump.Location
         private IDatabase database;
         private readonly IFileStoreProvider fileStore;
         private bool needsToSave;
-        private DirectoryWaitPeriod waitPeriod;
+        // pin timer to prevent GC
+        private Timer saveTimer;
+        
+        // In powershell_ise different tabs are represent different runspaces in the same process.
+        // The prepor implementation requires ConditionalWeakTable from .NET 4.5
+        private Dictionary<Runspace, DirectoryWaitPeriod> _waitPeriodDictionary;
+
         private DateTime lastSaveDate = DateTime.Now;
         private static CommandController defaultInstance;
 
         internal CommandController(IDatabase database, IFileStoreProvider fileStore)
         {
+            _waitPeriodDictionary = new Dictionary<Runspace, DirectoryWaitPeriod>();
+
             // This is so that we can read config settings from DLL config file
             string configFile = Assembly.GetExecutingAssembly().Location + ".config";
             AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", configFile);
@@ -27,8 +36,9 @@ namespace Jump.Location
 
             this.database = database;
             this.fileStore = fileStore;
-            var thread = new Thread(SaveLoop);
-            thread.Start();
+            // We don't want write data to disk very often.
+            // It's fine to lose jump data for last 2 seconds.
+            saveTimer = new Timer(SaveCallback, null, 0, 2 * 1000);
         }
 
         public static CommandController DefaultInstance
@@ -55,11 +65,13 @@ namespace Jump.Location
 
         public void UpdateLocation(string fullName)
         {
-            if (waitPeriod != null)
-                waitPeriod.CloseAndUpdate();
+            if (_waitPeriodDictionary.ContainsKey(Runspace.DefaultRunspace))
+            {
+                _waitPeriodDictionary[Runspace.DefaultRunspace].CloseAndUpdate();
+            }
 
             var record = database.GetByFullName(fullName);
-            waitPeriod = new DirectoryWaitPeriod(record, DateTime.Now);
+            _waitPeriodDictionary[Runspace.DefaultRunspace] = new DirectoryWaitPeriod(record, DateTime.Now);
             Save();
         }
 
@@ -73,24 +85,20 @@ namespace Jump.Location
             needsToSave = true;
         }
 
-        private void SaveLoop()
+        private void SaveCallback(object sender)
         {
-            while(true)
+            if (needsToSave)
             {
-                if (needsToSave)
+                try
                 {
-                    try
-                    {
-                        needsToSave = false;
-                        fileStore.Save(database);
-                        lastSaveDate = DateTime.Now;
-                    }
-                    catch(Exception e)
-                    {
-                        EventLog.WriteEntry("Application", string.Format("{0}\r\n{1}", e, e.StackTrace));
-                    }
+                    needsToSave = false;
+                    fileStore.Save(database);
+                    lastSaveDate = DateTime.Now;
                 }
-                else Thread.Sleep(10);
+                catch (Exception e)
+                {
+                    EventLog.WriteEntry("Application", string.Format("{0}\r\n{1}", e, e.StackTrace));
+                }
             }
         }
 

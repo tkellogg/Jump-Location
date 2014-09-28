@@ -16,7 +16,11 @@ namespace Jump.Location
 
         public void CloseAndUpdate()
         {
-            if (hasDestroyed) throw new InvalidOperationException("You can't call CloseAndUpdate multiple times");
+            if (hasDestroyed)
+            {
+                // ignore, don't throw error messages.
+                return;
+            }
 
             record.AddTimeSpent(DateTime.Now - startTime);
             hasDestroyed = true;
