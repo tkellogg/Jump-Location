@@ -2,6 +2,11 @@
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Security.AccessControl;
+using System.Security.Principal;
+using System.Threading;
 
 namespace Jump.Location
 {
@@ -26,15 +31,31 @@ namespace Jump.Location
 
     class FileStoreProvider : IFileStoreProvider
     {
-        private readonly string path;
-        private readonly string pathTemp;
+        private readonly string _path;
+        private readonly string _pathTemp;
+        private readonly string _mutexId;
+        private readonly MutexSecurity _securitySettings;
 
         private const string TempPrefix = ".tmp";
 
         public FileStoreProvider(string path)
         {
-            this.path = path;
-            this.pathTemp = path + TempPrefix;
+            this._path = path;
+            this._pathTemp = path + TempPrefix;
+
+            // global mutex implementation from http://stackoverflow.com/questions/229565/what-is-a-good-pattern-for-using-a-global-mutex-in-c
+
+            // get application GUID as defined in AssemblyInfo.cs
+            string appGuid = ((GuidAttribute)Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(GuidAttribute), false).GetValue(0)).Value.ToString(CultureInfo.InvariantCulture);
+
+            // unique id for global mutex - Global prefix means it is global to the machine
+            _mutexId = string.Format("Global\\{{{0}}}", appGuid);
+
+            // setting up security for multi-user usage
+            // work also on localized systems (don't use just "Everyone") 
+            var allowEveryoneRule = new MutexAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), MutexRights.FullControl, AccessControlType.Allow);
+            _securitySettings = new MutexSecurity();
+            _securitySettings.AddAccessRule(allowEveryoneRule);
         }
 
         public event FileStoreUpdated FileStoreUpdated;
@@ -47,20 +68,49 @@ namespace Jump.Location
 
         public void Save(IDatabase database)
         {
-            var lines = database.Records.Select(record => 
-                string.Format("{1}\t{0}", record.FullName, record.Weight.ToString(CultureInfo.InvariantCulture)));
+            var lines = database.Records.Select(record =>
+            string.Format("{1}\t{0}", record.FullName, record.Weight.ToString(CultureInfo.InvariantCulture)));
 
-            // We can lose all history, if powershell will be closed during operation.
-            File.WriteAllLines(pathTemp, lines.ToArray());
-            // NTFS guarantees atomic move operation http://stackoverflow.com/questions/774098/atomicity-of-file-move
-            // So File.Move gurantees atomic, but doesn't support overwrite
-            File.Copy(pathTemp, path, true);
+            bool createdNew;
+            using (var mutex = new Mutex(false, _mutexId, out createdNew, _securitySettings))
+            {
+                var hasHandle = false;
+                try
+                {
+                    try
+                    {
+                        hasHandle = mutex.WaitOne(1000, false);
+                        if (hasHandle == false)
+                        {
+                            // ignore
+                            return;
+                        }
+                    }
+                    catch (AbandonedMutexException)
+                    {
+                        // Log the fact the mutex was abandoned in another process, it will still get aquired
+                        hasHandle = true;
+                    }
+                    
+                    // We can lose all history, if powershell will be closed during operation.
+                    File.WriteAllLines(_pathTemp, lines.ToArray());
+                    // NTFS guarantees atomic move operation http://stackoverflow.com/questions/774098/atomicity-of-file-move
+                    // So File.Move gurantees atomic, but doesn't support overwrite
+                    File.Copy(_pathTemp, _path, true);
+                }
+                finally
+                {
+                    // edited by acidzombie24, added if statemnet
+                    if(hasHandle)
+                        mutex.ReleaseMutex();
+                }
+            }
         }
 
         public IDatabase Revive()
         {
             var db = new Database();
-            var allLines = File.ReadAllLines(path);
+            var allLines = File.ReadAllLines(_path);
             var nonBlankLines = allLines.Where(line => !string.IsNullOrEmpty(line) && line.Trim() != string.Empty);
             foreach (var columns in nonBlankLines.Select(line => line.Split('\t')))
             {
@@ -75,6 +125,6 @@ namespace Jump.Location
             return db;
         }
 
-        public DateTime LastChangedDate { get { return File.GetLastWriteTime(path); } }
+        public DateTime LastChangedDate { get { return File.GetLastWriteTime(_path); } }
     }
 }
