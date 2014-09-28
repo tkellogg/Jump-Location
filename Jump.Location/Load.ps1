@@ -19,13 +19,6 @@ if (-Not (Get-Command Jump-Location -ErrorAction SilentlyContinue)) {
 
 	New-Alias -Name jumpstat -Value Get-JumpStatus -Scope Global
 
-	function global:PushJ {
-		Param (
-			[Parameter(ValueFromRemainingArguments=$true)] $args
-		)
-		Set-JumpLocation @args -Push
-	}
-
 	function global:getj {
 		Param (
 			[Parameter(ValueFromRemainingArguments=$true)] $args
