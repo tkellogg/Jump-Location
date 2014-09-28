@@ -36,6 +36,7 @@ Using `j de` will jump to `Jump-Location\bin\Debug`. But use something like
 `j mo d` if you really want to go to `MongoDB.FSharp\bin\Debug`. You can 
 issue a `j mo d`. `mo` matches `MongoDB.FSharp` and `d` matches `Debug`.
 
+`j` internally calls `Push-Location`, so you can navigate back in your visited locations stack with `popd` or special Jump-Location query `j -`.
 
 Quick Primer on `jumpstat`
 --------------------------
