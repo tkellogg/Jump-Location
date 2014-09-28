@@ -36,9 +36,6 @@ namespace Jump.Location
             HelpMessage = "Initialize Jump-Location by starting to listen to directory changes.")]
         public SwitchParameter Initialize { get; set; }
 
-        [Parameter(ParameterSetName = "Query", HelpMessage = "Use pushd instead of cd to change directory. Same as `pushj`")]
-        public SwitchParameter Push { get; set; }
-
         public static void UpdateTime(string location)
         {
             Controller.UpdateLocation(location);
@@ -58,6 +55,13 @@ namespace Jump.Location
             }
 
             if (Query == null) { Query = new string[] {}; }
+
+            // "j -" is an alias for popd. 
+            if (Query.Length == 1 && Query[0] == "-")
+            {
+                InvokeCommand.InvokeScript("Pop-Location");
+                return;
+            }
 
             // If last term is absolute path it's probably because of autocomplition
             // we can safely process it here.
@@ -93,8 +97,7 @@ namespace Jump.Location
 
         private void ChangeDirectory(string fullPath)
         {
-            var verb = Push ? "Push" : "Set";
-            InvokeCommand.InvokeScript(string.Format("{1}-Location '{0}'", fullPath.Trim(), verb));
+            InvokeCommand.InvokeScript(string.Format("Push-Location '{0}'", fullPath.Trim()));
         }
     }
 }
