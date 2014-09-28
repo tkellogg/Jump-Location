@@ -67,10 +67,18 @@ namespace Jump.Location
                 return;
             }
 
-            var best = Controller.FindBest(Query);
-            if (best == null) throw new LocationNotFoundException(Query.First());
-
-            ChangeDirectory(best.Path);
+            IEnumerable<IRecord> orderedMatches = Controller.GetMatchesForSearchTerm(Query);
+            if (orderedMatches == null) throw new LocationNotFoundException(String.Join(" ", Query));
+            foreach (IRecord match in orderedMatches)
+            {
+                if (match.Provider == @"Microsoft.PowerShell.Core\FileSystem" && !Directory.Exists(match.Path))
+                {
+                    WriteWarning(String.Format("Skipping {0}: directory not found. You can remove obsolete directories from database with command 'jumpstat -cleanup'.", match.Path));
+                    continue;
+                }
+                ChangeDirectory(match.Path);
+                break;
+            }
         }
 
         private void ChangeDirectory(string fullPath)
