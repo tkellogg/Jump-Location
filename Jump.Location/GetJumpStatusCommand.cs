@@ -28,28 +28,33 @@ namespace Jump.Location
         [Parameter(ParameterSetName = "Cleanup", HelpMessage = "Remove obsolete(not existing on the file system) records from DB.")]
         public SwitchParameter Cleanup { get; set; }
 
-        [Parameter(ParameterSetName = "Scan", HelpMessage = "Scan and discover new directories from known directories.")]
-        public SwitchParameter Scan { get; set; }
+        [Parameter(ParameterSetName = "Scan", HelpMessage = "Scan and discover subdirectories.")]
+        [AllowEmptyString]
+        public string Scan { get; set; }
 
         protected override void ProcessRecord()
         {
-            
-            if (Cleanup.IsPresent)
+
+            if (this.ParameterSetName == "Cleanup")
             {
                 DoCleanup();
                 return;    
             }
 
-            if (Scan.IsPresent)
+            if (this.ParameterSetName == "Scan")
             {
                 DoScan();
                 return;
             }
 
-            if (All || Query == null || Query.Length == 0) 
+            if (All || Query == null || Query.Length == 0)
+            {
                 ProcessSearch(Controller.GetOrderedRecords(All));
-            else 
+            }
+            else
+            {
                 ProcessSearch(Controller.GetMatchesForSearchTerm(Query));
+            }
         }
 
         private const string FileSystemProvider = @"Microsoft.PowerShell.Core\FileSystem";
@@ -73,61 +78,35 @@ namespace Jump.Location
 
         private void DoScan()
         {
-            var home = Environment.GetEnvironmentVariable("USERPROFILE");
-            home = home ?? Path.Combine(Environment.GetEnvironmentVariable("HOMEDRIVE"), Environment.GetEnvironmentVariable("HOMEPATH"));
-            var dirs = new Dictionary<string, int>();
-
-            WriteVerbose("Discovering new folders.");
-            var currentDirs = new Dictionary<string, int>();
-            foreach (IRecord record in Controller.GetOrderedRecords(true))
+            if (string.IsNullOrEmpty(this.Scan))
             {
-                if (record.Provider == FileSystemProvider && Directory.Exists(record.Path))
-                {
-                    if (record.Path == home) continue; // Skip home folder - it's going to be in the list by default, and subfolders such as photos, music, etc. are probably not useful.
-                    currentDirs.Add(record.Path, 1);
-                    GetChildFolders(record.Path, dirs);
-                }
+                // set default to current directory
+                this.Scan = ".";
             }
+            this.Scan = GetUnresolvedProviderPathFromPSPath(this.Scan);
+            WriteVerbose("Discovering new folders.");
 
-            int numDirsAdded = 0;
-            WriteVerbose("Adding directories:");
-            foreach (string dir in dirs.Keys)
+            int count = 0;
+            foreach (string fullPath in GetChildFoldersRec(this.Scan))
             {
-                if (!currentDirs.ContainsKey(dir))
-                {
-                    WriteVerbose(dir);
-                    IRecord record = new Record(FileSystemProvider + "::" + dir, 0);
-                    Controller.AddRecord(record);
-                    numDirsAdded++;
-                }
+                WriteVerbose(string.Format("[Touching] {0}", fullPath));
+                Controller.TouchRecord(string.Format("{0}::{1}", FileSystemProvider, fullPath));
+                count++;
             }
 
             Controller.Save();
-
-            WriteVerbose(string.Format("Number of directories added: {0}.", numDirsAdded));
+            WriteVerbose(string.Format("Number of directories touched: {0}.", count));
         }
 
-        private void GetChildFolders(string dir, Dictionary<string, int> folders)
+        private IEnumerable<string> GetChildFoldersRec(string path)
         {
-            string[] subDirs = Directory.GetDirectories(dir);
-
-            int maxSubFolders = int.Parse(ConfigurationManager.AppSettings["Jump.Location.Scan.MaxSubFolders"] ?? "50");
-            // Skip scanning directories with more than maxSubFolders... probably not useful and also very large folders can slow scanning/queries down considerably.
-            if (subDirs.Length <= maxSubFolders)
+            yield return path; 
+            foreach (string dir in Directory.GetDirectories(path))
             {
-                foreach (string subDir in subDirs)
+                foreach (string childDir in GetChildFoldersRec(dir))
                 {
-                    WriteVerbose(subDir);
-                    if (!folders.ContainsKey(subDir))
-                    {
-                        folders.Add(subDir, 1);
-                        GetChildFolders(subDir, folders);
-                    }
+                    yield return childDir;
                 }
-            }
-            else
-            {
-                WriteWarning(string.Format("Skipped folder {0}. More than {1} subdirs.", dir, maxSubFolders));
             }
         }
 
@@ -148,8 +127,9 @@ namespace Jump.Location
             }
 
             foreach (var record in records)
+            {
                 WriteObject(record);
-
+            }
             WriteVerbose("Number of records: " + records.Count() + ".");
         }
     }
