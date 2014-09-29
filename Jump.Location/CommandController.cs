@@ -75,10 +75,10 @@ namespace Jump.Location
             Save();
         }
 
-        public void AddRecord(IRecord record)
+        public IRecord TouchRecord(string fullName)
         {
-            database.Add(record);
-       }
+            return database.GetByFullName(fullName);
+        }
 
         public void Save()
         {
