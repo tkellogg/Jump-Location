@@ -73,7 +73,6 @@
     <Compile Include="Record.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="debug.psc1">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
