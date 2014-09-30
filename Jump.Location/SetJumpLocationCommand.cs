@@ -89,9 +89,17 @@ namespace Jump.Location
                 destinationFound = true;
                 break;
             }
+
             if (!destinationFound)
             {
-                throw new LocationNotFoundException(String.Join(" ", Query));
+                // ask PowerShell to try to resolve the path (handling for things like "~")
+                var resolvedPath = GetUnresolvedProviderPathFromPSPath(Query.Last());
+
+                if (!Directory.Exists(resolvedPath))
+                {
+                    throw new LocationNotFoundException(String.Join(" ", Query));
+                }
+                ChangeDirectory(Query.Last());
             }
         }
 
