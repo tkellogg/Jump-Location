@@ -84,7 +84,7 @@ C:\ choco install Jump-Location
 
 Otherwise you can still install it manually.
 
-1. Download [latest release][5].
+1. Download [the latest release][5].
 2. Open properties for zip file and click "Unblock" button if you have one.
 3. Unzip 
 4. Open a PowerShell console
