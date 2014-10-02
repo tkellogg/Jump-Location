@@ -76,10 +76,15 @@ Installation
 
 *Important:* Jump-Location requires PowerShell version 3 or higher. Older installations of Windows 7 may only have PowerShell version 2. [How to update powershell][7]. 
 
-There is now a [Chocolatey package][6] for Jump-Location. To install via Chocolaty
+**Recommended**: Install from [psget.net][8]:
+```
+Install-Module Jump.Location
+```
+
+There is also a [Chocolatey package][6] for Jump-Location. To install via Chocolaty
 
 ```
-C:\ choco install Jump-Location
+choco install Jump-Location
 ```
 
 Otherwise you can still install it manually.
@@ -130,3 +135,4 @@ References
  [5]: https://sourceforge.net/projects/jumplocation/files/latest/download
  [6]: https://chocolatey.org/packages/Jump-Location
  [7]: http://social.technet.microsoft.com/wiki/contents/articles/21016.how-to-install-windows-powershell-4-0.aspx
+ [8]: http://psget.net/
