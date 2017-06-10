@@ -32,6 +32,10 @@ namespace Jump.Location
         [AllowEmptyString]
         public string Scan { get; set; }
 
+        [Parameter(HelpMessage = "Exclude directories and all subdirectories from scan.")]
+        [AllowEmptyCollection]
+        public string[] Exclude { get; set; }
+
         protected override void ProcessRecord()
         {
 
@@ -101,13 +105,23 @@ namespace Jump.Location
         private IEnumerable<string> GetChildFoldersRec(string path)
         {
             yield return path; 
-            foreach (string dir in Directory.GetDirectories(path))
+            foreach (string dir in Directory.GetDirectories(path).Where(ScanIncludesDirectory))
             {
                 foreach (string childDir in GetChildFoldersRec(dir))
                 {
                     yield return childDir;
                 }
             }
+        }
+
+        private bool ScanIncludesDirectory(string path) 
+        {
+            if (null == Exclude || Exclude.Length == 0) 
+            {
+                return true;
+            }
+
+            return !Exclude.Contains(new DirectoryInfo(path).Name, StringComparer.OrdinalIgnoreCase);
         }
 
         private void ProcessSearch(IEnumerable<IRecord> records)
