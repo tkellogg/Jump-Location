@@ -1,6 +1,7 @@
 language: csharp
 solution: Jump.Location.sln
 install:
+  - sudo apt-get install -y powershell
   - nuget restore Jump.Location.sln
   - nuget install xunit.runners -Version 1.9.2 -OutputDirectory testrunner
 script:
