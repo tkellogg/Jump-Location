@@ -1,3 +1,10 @@
+This project is not actively maintained. Please consider using its successor [`ZLocation`](https://github.com/vors/ZLocation).
+=====================
+
+
+---------------------
+
+
 Jump-Location: A cd that learns
 =====================
 
