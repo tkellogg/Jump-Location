@@ -69,13 +69,19 @@ NestedModules = @()
 FunctionsToExport = '*'
 
 # Cmdlets to export from this module
-CmdletsToExport = '*'
+CmdletsToExport = @(
+        "Get-JumpStatus", 
+        "Set-JumpLocation"
+)
 
 # Variables to export from this module
 VariablesToExport = '*'
 
 # Aliases to export from this module
-AliasesToExport = '*'
+AliasesToExport = @(
+        "j",
+        "jumpstat"
+)
 
 # List of all modules packaged with this module
 ModuleList = @()
